@@ -1,0 +1,53 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kombajn_api
+    command: >
+      uvicorn backend.app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    volumes:
+      - ./backend:/app/backend
+      - ./data/ssd:/data/ssd
+      - ./data/usb:/data/usb
+      - ./data/hdd:/data/hdd
+    ports:
+      - "8000:8000"
+    environment:
+      KOMBAJN_REDIS_BROKER_URL: redis://redis:6379/0
+      KOMBAJN_REDIS_RESULT_BACKEND: redis://redis:6379/1
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kombajn_worker
+    command: celery -A backend.app.celery_app.celery_app worker -Q tracer -l info --concurrency=1 --prefetch-multiplier=1
+    volumes:
+      - ./backend:/app/backend
+      - ./data/ssd:/data/ssd
+      - ./data/usb:/data/usb
+      - ./data/hdd:/data/hdd
+    environment:
+      KOMBAJN_REDIS_BROKER_URL: redis://redis:6379/0
+      KOMBAJN_REDIS_RESULT_BACKEND: redis://redis:6379/1
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: kombajn_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  redis-data:
+

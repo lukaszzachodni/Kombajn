@@ -1,0 +1,45 @@
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS / misc
+.DS_Store
+Thumbs.db
+
+# Python tooling
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+coverage.xml
+.coverage*
+
+# Docker
+*.log
+logs/
+
+# Data / models / assets (duże pliki)
+data/
+models/
+assets/
+
+# Local config / secrets
+*.env.local
+*.secret
+secrets/
