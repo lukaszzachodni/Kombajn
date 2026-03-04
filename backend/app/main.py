@@ -1,12 +1,26 @@
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 
 from .celery_app import celery_app
 from .storage import StorageManager
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
+
 app = FastAPI(title="KOMBAJN AI - Sprint 0 API")
 
 storage = StorageManager()
+
+
+@app.get("/", response_class=HTMLResponse)
+def landing() -> HTMLResponse:
+    """Statyczna strona startowa z linkami do narzędzi."""
+    index_path = STATIC_DIR / "index.html"
+    html = index_path.read_text(encoding="utf-8")
+    return HTMLResponse(content=html)
 
 
 @app.get("/health")
