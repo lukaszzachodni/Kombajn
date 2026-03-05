@@ -43,3 +43,4 @@ assets/
 *.env.local
 *.secret
 secrets/
+.continue/
