@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>KOMBAJN AI – Panel startowy</title>
+    <title>KOMBAJN AI – Startup Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Bootstrap 5 (CSS) -->
     <link
@@ -112,7 +112,7 @@
             <div class="card bg-dark border-secondary-subtle h-100">
               <div class="card-body">
                 <h2 class="card-title h6 text-uppercase text-secondary mb-3">
-                  Nawigacja
+                  Navigation
                 </h2>
                 <div class="row g-2">
                   <div class="col-12 col-md-6">
@@ -124,7 +124,7 @@
                     >
                       <div class="fw-semibold">API · FastAPI docs</div>
                       <div class="small text-secondary">
-                        Interaktywne testowanie endpointów (Swagger / OpenAPI).
+                        Interactive endpoint testing (Swagger / OpenAPI).
                       </div>
                       <div class="small mt-1">
                         <code>http://localhost:8000/docs</code>
@@ -138,9 +138,9 @@
                       rel="noreferrer"
                       class="btn btn-outline-success w-100 text-start"
                     >
-                      <div class="fw-semibold">Health · pełny tor</div>
+                      <div class="fw-semibold">Health · Full Path</div>
                       <div class="small text-secondary">
-                        API, storage (SSD) oraz kolejki Celery + Redis.
+                        API, Storage (SSD), and Celery + Redis queues.
                       </div>
                       <div class="small mt-1">
                         <code>GET /health/full</code>
@@ -154,9 +154,9 @@
                       rel="noreferrer"
                       class="btn btn-outline-light w-100 text-start"
                     >
-                      <div class="fw-semibold">Front scenariuszy (Streamlit)</div>
+                      <div class="fw-semibold">Scenario Front (Streamlit)</div>
                       <div class="small text-secondary">
-                        Docelowy UI do uruchamiania scenariuszy (placeholder).
+                        Control panel for launching scenarios and rendering.
                       </div>
                       <div class="small mt-1">
                         <code>http://localhost:8501</code>
@@ -170,9 +170,9 @@
                       rel="noreferrer"
                       class="btn btn-outline-light w-100 text-start"
                     >
-                      <div class="fw-semibold">Kolejki zadań (Flower)</div>
+                      <div class="fw-semibold">Task Queues (Flower)</div>
                       <div class="small text-secondary">
-                        Podgląd zadań Celery, workerów i kolejek w czasie rzeczywistym.
+                        Real-time monitoring of Celery tasks and workers.
                       </div>
                       <div class="small mt-1">
                         <code>http://localhost:5555 (Status: Auto-start)</code>
@@ -188,53 +188,50 @@
             <div class="card bg-dark border-secondary-subtle mb-3">
               <div class="card-body">
                 <h2 class="card-title h6 text-uppercase text-secondary mb-3">
-                  API – skrót
+                  API – Cheat Sheet
                 </h2>
                 <div class="table-responsive">
                   <table class="table table-sm table-dark table-borderless mb-1">
                     <thead class="small text-secondary">
                       <tr>
-                        <th scope="col">Metoda</th>
-                        <th scope="col">Ścieżka</th>
-                        <th scope="col">Opis</th>
+                        <th scope="col">Method</th>
+                        <th scope="col">Path</th>
+                        <th scope="col">Description</th>
                       </tr>
                     </thead>
                     <tbody class="small align-middle">
                       <tr>
                         <td><span class="badge bg-success">GET</span></td>
                         <td><code>/health</code></td>
-                        <td>Podstawowy healthcheck API.</td>
+                        <td>Basic API healthcheck.</td>
                       </tr>
                       <tr>
                         <td><span class="badge bg-success">GET</span></td>
                         <td><code>/health/storage</code></td>
-                        <td>Test zapisu/odczytu w storage (SSD).</td>
+                        <td>Test read/write in storage layer (SSD).</td>
                       </tr>
                       <tr>
                         <td><span class="badge bg-success">GET</span></td>
                         <td><code>/health/celery</code></td>
-                        <td>
-                          Sprawdza, czy worker Celery żyje i przyjmuje zadania.
-                        </td>
+                        <td>Checks if Celery worker is alive.</td>
                       </tr>
                       <tr>
                         <td><span class="badge bg-success">GET</span></td>
                         <td><code>/health/full</code></td>
-                        <td>Łączny status API + storage + kolejki.</td>
+                        <td>Combined status of API + storage + queues.</td>
                       </tr>
                       <tr>
                         <td><span class="badge bg-primary">POST</span></td>
-                        <td><code>/tasks/tracer?project_id=ID</code></td>
+                        <td><code>/tasks/generate-video</code></td>
                         <td>
-                          Wrzuca zadanie testowe, które zapisuje JSON w
-                          <code>data/ssd/tracer-bullets</code>.
+                          Submits a video rendering task via JSON manifest.
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p class="small text-secondary mb-0">
-                  Pełna dokumentacja i schematy dostępne są w
+                  Full documentation and schemas are available at
                   <a href="/docs" class="link-light" target="_blank">/docs</a>.
                 </p>
               </div>
@@ -243,7 +240,7 @@
             <div class="card bg-dark border-secondary-subtle">
               <div class="card-body">
                 <h2 class="card-title h6 text-uppercase text-secondary mb-3">
-                  Stan lokalny
+                  Local Stack Status
                 </h2>
                 <ul class="list-unstyled small mb-0">
                   <li class="d-flex justify-content-between">
@@ -255,8 +252,8 @@
                     <span><code>redis://localhost:6379/0</code></span>
                   </li>
                   <li class="d-flex justify-content-between">
-                    <span class="text-secondary">Celery queue</span>
-                    <span><code>tracer</code></span>
+                    <span class="text-secondary">Worker</span>
+                    <span><code>worker1@kombajn</code></span>
                   </li>
                   <li class="d-flex justify-content-between">
                     <span class="text-secondary">Storage</span>
@@ -272,10 +269,9 @@
           class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-3 small text-secondary"
         >
           <span>
-            Ta strona jest statycznym panelem startowym – możesz swobodnie
-            dopisywać kolejne linki do narzędzi i scenariuszy.
+            This is a static startup panel – feel free to add more links to scenarios.
           </span>
-          <span><strong>Sprint&nbsp;0</strong> · Infrastrukturka &amp; testy</span>
+          <span><strong>Sprint&nbsp;0</strong> · Infrastructure & Foundation</span>
         </footer>
       </main>
     </div>
@@ -287,17 +283,5 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-    <script>
-      // Przykład użycia jQuery – szybki podgląd health bez przeładowania
-      $(function () {
-        $.get("/health/full")
-          .done(function () {
-            console.log("Infra OK");
-          })
-          .fail(function () {
-            console.warn("Health /health/full zwrócił błąd");
-          });
-      });
-    </script>
   </body>
 </html>

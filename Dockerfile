@@ -7,7 +7,14 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    ffmpeg \
+    imagemagick \
+    ghostscript \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
+
+# Fix for ImageMagick security policy (required for TextClip to work)
+RUN sed -i 's/policy domain="path" rights="none" pattern="@\*"/policy domain="path" rights="read|write" pattern="@\*"/g' /etc/ImageMagick-6/policy.xml
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
