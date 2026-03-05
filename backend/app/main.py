@@ -1,9 +1,11 @@
 from pathlib import Path
 
+from celery.result import AsyncResult
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 
 from .celery_app import celery_app
+from .schemas import DatetimeToTimestampRequest
 from .storage import StorageManager
 
 
@@ -83,9 +85,28 @@ def health_full() -> dict:
     }
 
 
-@app.post("/tasks/tracer")
-def create_tracer_task(project_id: str) -> dict:
-    """Tworzy zadanie Celery, które zapisze JSON w storage."""
-    async_result = celery_app.send_task("kombajn.tasks.tracer_bullet", kwargs={"project_id": project_id})
-    return {"task_id": async_result.id, "project_id": project_id}
+@app.post("/tasks/datetime-to-timestamp")
+def create_datetime_task(payload: DatetimeToTimestampRequest) -> dict:
+    """Tworzy zadanie Celery, które przelicza datetime (ISO) na timestamp."""
+    # FastAPI już waliduje payload Pydantic, tutaj jedynie przekazujemy dalej
+    async_result = celery_app.send_task(
+        "kombajn.tasks.datetime_to_timestamp",
+        kwargs={"datetime_iso": payload.datetime_iso},
+    )
+    return {"task_id": async_result.id, "datetime_iso": payload.datetime_iso}
+
+
+@app.get("/tasks/{task_id}")
+def get_task_status(task_id: str) -> dict:
+    """Zwraca stan i wynik zadania Celery."""
+    result = AsyncResult(task_id, app=celery_app)
+    payload: dict = {
+        "task_id": task_id,
+        "state": result.state,
+        "ready": result.ready(),
+        "successful": result.successful(),
+    }
+    if result.successful():
+        payload["result"] = result.result
+    return payload
 

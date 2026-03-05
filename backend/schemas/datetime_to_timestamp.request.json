@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kombajn.local/schemas/datetime_to_timestamp.request.json",
+  "title": "DatetimeToTimestampRequest",
+  "type": "object",
+  "properties": {
+    "datetime_iso": {
+      "$ref": "./components/datetime_iso.json"
+    },
+    "required": [
+      "datetime_iso"
+    ],
+    "additionalProperties": false
+  }

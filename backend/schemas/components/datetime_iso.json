@@ -1,0 +1,5 @@
+{
+  "type": "string",
+  "description": "Datetime w formacie ISO 8601, np. 2026-03-04T12:34:56+00:00",
+  "format": "date-time"
+}

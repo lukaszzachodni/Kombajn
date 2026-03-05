@@ -22,6 +22,21 @@ services:
     depends_on:
       - redis
 
+  scenario_ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kombajn_scenario_ui
+    command: streamlit run backend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "8501:8501"
+    environment:
+      KOMBAJN_API_BASE: http://api:8000
+    depends_on:
+      - api
+
   worker:
     build:
       context: .
@@ -36,6 +51,23 @@ services:
     environment:
       KOMBAJN_REDIS_BROKER_URL: redis://redis:6379/0
       KOMBAJN_REDIS_RESULT_BACKEND: redis://redis:6379/1
+    depends_on:
+      - redis
+
+  flower:
+    image: mher/flower:2.0
+    container_name: kombajn_flower
+    command: >
+      celery
+      --app=backend.app.celery_app.celery_app
+      flower
+      --url_prefix=/
+      --port=5555
+      --broker=redis://redis:6379/0
+    volumes:
+      - ./backend:/app/backend
+    ports:
+      - "5555:5555"
     depends_on:
       - redis
 

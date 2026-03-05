@@ -10,7 +10,8 @@ celery_app = Celery(
 )
 
 celery_app.conf.task_routes = {
-    "kombajn.tasks.tracer_bullet": {"queue": "tracer"},
+    "kombajn.tasks.datetime_to_timestamp": {"queue": "tracer"},
+    "kombajn.tasks.ping": {"queue": "tracer"},
 }
 
 celery_app.autodiscover_tasks(["backend.app"])
