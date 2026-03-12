@@ -12,9 +12,10 @@ from .storage import StorageManager
 storage = StorageManager()
 
 
-@celery_app.task(name="kombajn.tasks.render_scene")
-def render_scene(project_id: str, scene_dict: dict, width: int, height: int, fps: int, scene_index: int) -> str:
+@celery_app.task(name="kombajn.tasks.render_scene", bind=True)
+def render_scene(self, project_id: str, scene_dict: dict, width: int, height: int, fps: int, scene_index: int) -> dict:
     """Renders a single scene to a temporary .mp4 file."""
+    worker_name = self.request.hostname
     scene = Scene(**scene_dict)
     
     # Temp directory for partial renders
@@ -54,12 +55,16 @@ def render_scene(project_id: str, scene_dict: dict, width: int, height: int, fps
     final_scene = CompositeVideoClip(element_clips, size=(width, height))
     final_scene.write_videofile(str(temp_path), fps=fps, codec="libx264", audio=False, logger=None)
     
-    return str(temp_path)
+    return {
+        "path": str(temp_path),
+        "worker": worker_name
+    }
 
 
-@celery_app.task(name="kombajn.tasks.assemble_video")
-def assemble_video(scene_paths: List[str], project_id: str, fps: int) -> dict:
+@celery_app.task(name="kombajn.tasks.assemble_video", bind=True)
+def assemble_video(self, scene_paths: List[str], project_id: str, fps: int) -> dict:
     """Concatenates all partial scene renders into the final output."""
+    worker_name = self.request.hostname
     output_dir = Path("/data/ssd") / "renders" / project_id
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"final_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
@@ -79,7 +84,8 @@ def assemble_video(scene_paths: List[str], project_id: str, fps: int) -> dict:
     return {
         "project_id": project_id,
         "final_path": str(output_path),
-        "status": "completed"
+        "status": "completed",
+        "worker": worker_name
     }
 
 
@@ -114,6 +120,10 @@ def datetime_to_timestamp(datetime_iso: str) -> dict:
     return {"timestamp": dt.timestamp()}
 
 
-@celery_app.task(name="kombajn.tasks.ping")
-def ping() -> dict:
-    return {"echo": "ping", "timestamp_utc": datetime.now(timezone.utc).isoformat()}
+@celery_app.task(name="kombajn.tasks.ping", bind=True)
+def ping(self) -> dict:
+    return {
+        "echo": "ping", 
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "worker": self.request.hostname
+    }

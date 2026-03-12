@@ -8,28 +8,29 @@ KOMBAJN AI is not a monolithic application; it is a **Distributed Atomic Engine*
 ## 1. Universal Atomic-Task Architecture
 Every module in the system (Audio, Vision, Logic, Video) follows the same execution pattern:
 - **No Monolithic Tasks**: If a task takes more than a few seconds or consumes significant VRAM/CPU, it must be split.
-- **Queue-First Communication**: Modules never call each other directly via internal APIs. They "talk" by placing atomic tasks into specific queues (`audio_processing`, `vision_analysis`, `video_rendering`).
-- **Idempotency**: Every atomic task can be retried safely. If a worker crashes while rendering 1 second of video or analyzing 5 seconds of audio, only that atom is re-executed.
+- **Queue-First Communication**: Modules never call each other directly via internal APIs.
+- **Idempotency**: Every atomic task can be retried safely.
 
-## 2. JSON-Driven Orchestration (Manifests)
-The state and logic of a project are defined by declarative JSON manifests.
-- **Single Source of Truth**: Pydantic v2 models define exactly what is possible.
-- **Workflow as Data**: A "project" is just a series of manifests that transition through different atomic states.
-- **Compute Agnostic**: Since tasks are atomic and manifests are JSON, the system can distribute work across a local GPU, a remote CPU cluster, or a cloud API without changing a single line of business logic.
+## 2. Dynamic Resource Routing (KombajnRouter)
+To ensure the system remains responsive on a single machine while being ready for the cloud, we use a **Dynamic Routing** layer:
+- **Separation of Concerns**: Tasks are routed based on their resource needs (IO vs. CPU vs. GPU).
+- **Routing Hints**: The system can override default local routing with hints (e.g., `routing_hint='runpod'`) to outsource specific tasks without changing business logic.
+- **Zero-Code Scaling**: Moving a task from local to cloud is an infrastructure change (Docker/Settings), not a code rewrite.
 
-## 3. Module Examples as Atomic Flows
-- **Audio Module**: Instead of "Process Song," it triggers `split_stems` (Demucs), then multiple `analyze_rhythm` tasks for each stem, then `generate_beatmap`.
-- **Vision Module**: Instead of "Analyze Video," it triggers hundreds of `detect_roi` and `describe_frame` tasks in parallel.
-- **Video Module**: Already implemented as `render_scene` atoms followed by an `assemble_video` stitcher.
+## 3. JSON-Driven Orchestration (Manifests)
+The state and logic of a project are defined by declarative JSON manifests (Pydantic v2).
+- **Compute Agnostic**: Since tasks are atomic and manifests are JSON, the system can distribute work across any node.
 
 ## 4. Compute Factory & Hardware Mapping
-- **Resource-Aware Routing**: Workers are "specialists." A worker with 4GB VRAM only takes `render_scene` or `vision_analysis` atoms. A CPU worker takes `logic` or `assembly` atoms.
-- **Tiered Storage**: `fsspec` abstracts all file operations, allowing atomic tasks to read/write to SSD, HDD, or S3 seamlessly.
-- **Horizontal Scaling**: Adding more "compute nodes" (containers) immediately speeds up the entire factory by increasing the throughput of atomic processing.
-
----
+Workers are "specialists" listening to specific queues:
+- **`q_io` / `q_default`**: Fast, non-blocking tasks (API calls, small DB updates, notifications).
+- **`q_cpu_edit`**: Heavy CPU-bound tasks (FFMPEG rendering, MoviePy montage). Limited to low concurrency locally to prevent OS freezing.
+- **`q_gpu_local`**: Local AI inference (Vision, Transcription).
+- **`q_runpod` / `q_cloud`**: Reserved for external compute nodes.
 
 ## 5. Technology Stack
-- **Backend**: Python 3.10+, FastAPI, Celery + Redis (Orchestration).
+- **Backend**: Python 3.10+, FastAPI, Celery + Redis.
 - **Processing**: MoviePy (Video), Demucs (Audio), Moondream2 (Vision).
-- **Tooling**: Flower (Queue Monitoring), Pydantic (Contract Validation).
+- **Monitoring**: 
+    - **Flower**: Task lifecycle and worker health.
+    - **Redis Commander**: Real-time queue depth and raw data inspection.

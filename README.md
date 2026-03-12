@@ -56,6 +56,29 @@ Once the stack is up, you can access the following dashboards:
 
 ---
 
+## 🧪 Testing
+
+The system includes automated self-evaluation to ensure the **Atomic-Task Architecture** and **KombajnRouter** are correctly configured.
+
+### 1. Integration (Smoke) Test
+This test validates the entire stack (Redis, Workers, Router, MoviePy) by dispatching real tasks and verifying they are picked up by the correct specialist workers.
+```bash
+docker exec -it kombajn_worker_io python backend/app/smoke_test_routing.py
+```
+*Wait for the "🚀 ALL SYSTEMS GO" report.*
+
+### 2. Unit Tests
+Validates the internal logic of the **KombajnRouter** without requiring the full Docker stack to be running (logic-only).
+```bash
+docker exec -it kombajn_worker_io /bin/sh -c "PYTHONPATH=. pytest backend/app/tests/test_router.py"
+```
+
+### 🔍 Monitoring
+- **Flower**: `http://localhost:5555/tasks` — Track task lifecycle and worker assignments.
+- **Redis Commander**: `http://localhost:8081` — Inspect raw queue data and Redis keys.
+
+---
+
 ## 🏗️ Project Structure
 - `backend/app/`: Core logic, Celery tasks, and Pydantic schemas.
 - `backend/streamlit_app.py`: Operations UI.
