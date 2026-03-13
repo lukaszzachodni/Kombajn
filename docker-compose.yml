@@ -10,9 +10,11 @@ x-worker-base: &worker-base
   environment:
     - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
     - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
+    - KOMBAJN_DRY_RUN=true
     - PYTHONPATH=.
   depends_on:
-    - redis
+    redis:
+      condition: service_healthy
 
 services:
   api:
@@ -37,7 +39,8 @@ services:
       - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
       - PYTHONPATH=.
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   scenario_ui:
     build:
@@ -55,13 +58,11 @@ services:
     depends_on:
       - api
 
-  # Worker for light tasks (IO, API calls, notifications)
   worker_io:
     <<: *worker-base
     container_name: kombajn_worker_io
     command: celery -A backend.app.celery_app.celery_app worker -n worker_io -Q q_io,q_default -l info --concurrency=4 -E
 
-  # Worker for heavy CPU tasks (Video rendering, Montage)
   worker_editor:
     <<: *worker-base
     container_name: kombajn_worker_editor
@@ -90,7 +91,8 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - PYTHONPATH=.
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   redis:
     image: redis:7-alpine
@@ -100,6 +102,11 @@ services:
       - redis-data:/data
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis-commander:
     image: rediscommander/redis-commander:latest
@@ -109,7 +116,8 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
 volumes:
   redis-data:
