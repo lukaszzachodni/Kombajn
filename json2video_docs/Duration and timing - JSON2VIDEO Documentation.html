@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- saved from url=(0074)https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script type="text/javascript" async="" src="./Duration and timing - JSON2VIDEO Documentation_files/analytics.js"></script><script type="text/javascript" async="" src="./Duration and timing - JSON2VIDEO Documentation_files/js"></script><script async="" src="./Duration and timing - JSON2VIDEO Documentation_files/js(1)"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-Z0YPW0QY8X');
+    </script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive documentation for our API service">
+    <title>Duration and timing - JSON2VIDEO Documentation</title>
+    <!-- <base href="/docs/v2/"> -->
+    <link rel="stylesheet" href="./Duration and timing - JSON2VIDEO Documentation_files/styles.css">
+    <link rel="stylesheet" href="./Duration and timing - JSON2VIDEO Documentation_files/highlight-github.min.css">
+    <link rel="icon" type="image/svg+xml" href="./Duration and timing - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <link rel="alternate icon" href="./Duration and timing - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <!-- SEO tags -->
+    <meta property="og:title" content="Duration and timing">
+    <meta property="og:description" content="Comprehensive documentation for our API service">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Duration and timing">
+    <meta name="twitter:description" content="Comprehensive documentation for our API service">
+</head>
+<body>
+    <!-- Header -->
+    <!-- Header -->
+<header class="header">
+    <div class="header-color color-gradient"></div>
+    <div class="header-inner">
+        <a href="https://json2video.com/docs/v2/" class="logo">
+            <img src="./Duration and timing - JSON2VIDEO Documentation_files/json2video-logo.svg" style="height:20px;">
+            JSON2VIDEO Documentation        </a>
+        <div>
+            <!-- Search Box -->
+            <div class="search-container">
+                <form id="searchForm" action="https://json2video.com/docs/v2/chatbot/" method="GET">
+                    <input type="text" id="searchInput" name="q" placeholder="Search docs... (Press / or ⌘K)" aria-label="Search documentation">
+                    <button type="submit" class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div>
+            <div class="header-buttons">
+                <a class="header-button" href="https://json2video.com/docs/getting-started.html">Archived docs</a>
+                <a id="getAPIKeyButton" class="header-button" href="https://json2video.com/get-api-key/">Get your API Key</a>
+                <a id="avatar" href="https://json2video.com/dashboard/" title="Dashboard">
+                    <svg id="avatar-icon" width="32px" height="32px" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M12 6a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M6.5 19.5c0-2.5 2.5-4.5 5.5-4.5s5.5 2 5.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </a>
+                <script>
+                    function replaceAvatarWhenLoggedIn() {
+                        console.log("Replace avatar when logged in");
+                        // check if user is signed in
+                        const userProfile = localStorage.getItem("userProfile");
+                        if (userProfile) {
+                            try {
+                                const profile = JSON.parse(userProfile);
+                                const avatar = document.getElementById("avatar");
+                                if (avatar && profile && profile.picture) {
+                                    avatar.innerHTML = `<img src="${profile.picture}" class="rounded-full h-10 w-10">`;
+                                    const getAPIKeyButton = document.getElementById("getAPIKeyButton");
+                                    if (getAPIKeyButton) getAPIKeyButton.style.display = "none";
+                                    const getAPIKeyButtonMobile = document.getElementById("getAPIKeyButtonMobile");
+                                    if (getAPIKeyButtonMobile) getAPIKeyButtonMobile.style.display = "none";
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }
+                    replaceAvatarWhenLoggedIn();
+                </script>
+            </div>
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+    </div>
+    <div class="header-tabs">
+        <a href="https://json2video.com/docs/v2/" class="header-tab header-active-tab">
+            <div class="header-tab-text">Documentation</div>
+        </a>
+        <a href="https://json2video.com/docs/v2/chatbot/" class="header-tab ">
+            <div class="header-tab-text">🤖 AI Assistant</div>
+        </a>
+    </div>
+</header>
+
+<!-- Search Keyboard Shortcuts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Check if not already focused in an input or textarea
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                // Slash key (/) shortcut
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+                
+                // Cmd+K or Ctrl+K shortcut
+                if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            }
+        });
+
+        // Focus the search input when the search icon is clicked
+        document.querySelector('.search-button').addEventListener('click', function(e) {
+            if (document.getElementById('searchInput').value.trim() === '') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    });
+</script>    
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar panel">
+            <div class="sidebar-inner">
+                <nav class="sidebar-nav">
+                    <ul><li class="has-children" data-path="getting-started"><a href="https://json2video.com/docs/v2/getting-started">Getting Started<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/what-is-json2video"><a href="https://json2video.com/docs/v2/getting-started/what-is-json2video">What is JSON2Video</a></li><li class="has-children" data-path="getting-started/how-it-works"><a href="https://json2video.com/docs/v2/getting-started/how-it-works">How it works<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/how-it-works/using-the-api-programmatically"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-the-api-programmatically">Using the API programmatically</a></li><li data-path="getting-started/how-it-works/using-no-code-tools"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-no-code-tools">Using no-code tools</a></li></ul></ul></li><li data-path="getting-started/basic-concepts"><a href="https://json2video.com/docs/v2/getting-started/basic-concepts">Basic Concepts</a></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference"><a href="https://json2video.com/docs/v2/api-reference">API Reference<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/getting-your-api-key"><a href="https://json2video.com/docs/v2/api-reference/getting-your-api-key">Getting your API key</a></li><li data-path="api-reference/authentication"><a href="https://json2video.com/docs/v2/api-reference/authentication">Authentication</a></li><li class="has-children" data-path="api-reference/api-endpoints"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints">API Endpoints<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/api-endpoints/movies"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints/movies">Movies</a></li></ul></ul></li><li class="has-children" data-path="api-reference/json-syntax"><a href="https://json2video.com/docs/v2/api-reference/json-syntax">JSON Syntax<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/movie"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/movie">Movie</a></li><li data-path="api-reference/json-syntax/scene"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/scene">Scene</a></li><li class="has-children" data-path="api-reference/json-syntax/element"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element">Element<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/element/image"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/image">Image</a></li><li data-path="api-reference/json-syntax/element/video"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/video">Video</a></li><li data-path="api-reference/json-syntax/element/text"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/text">Text</a></li><li data-path="api-reference/json-syntax/element/component"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/component">Component</a></li><li data-path="api-reference/json-syntax/element/audio"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audio">Audio</a></li><li data-path="api-reference/json-syntax/element/audiogram"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audiogram">Audiogram</a></li><li data-path="api-reference/json-syntax/element/voice"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/voice">Voice</a></li><li data-path="api-reference/json-syntax/element/subtitles"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles">Subtitles</a></li></ul></ul></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference/mastering"><a href="https://json2video.com/docs/v2/api-reference/mastering">Mastering<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li class="active-page active-path expanded" data-path="api-reference/mastering/duration-and-timing"><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing" class="active">Duration and timing</a></li><li data-path="api-reference/mastering/layering"><a href="https://json2video.com/docs/v2/api-reference/mastering/layering">Layering</a></li><li data-path="api-reference/mastering/positioning"><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning">Positioning</a></li><li data-path="api-reference/mastering/caching-system"><a href="https://json2video.com/docs/v2/api-reference/mastering/caching-system">Caching system</a></li><li data-path="api-reference/mastering/variables"><a href="https://json2video.com/docs/v2/api-reference/mastering/variables">Variables</a></li><li data-path="api-reference/mastering/expressions"><a href="https://json2video.com/docs/v2/api-reference/mastering/expressions">Expressions</a></li><li data-path="api-reference/mastering/conditional-elements"><a href="https://json2video.com/docs/v2/api-reference/mastering/conditional-elements">Conditional elements</a></li><li data-path="api-reference/mastering/dynamic-number-of-scenes"><a href="https://json2video.com/docs/v2/api-reference/mastering/dynamic-number-of-scenes">Dynamic number of scenes</a></li></ul></ul></li><li class="has-children" data-path="api-reference/ai-integrations"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations">AI integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/ai-integrations/elevenlabs"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations/elevenlabs">ElevenLabs</a></li></ul></ul></li><li class="has-children" data-path="api-reference/templates"><a href="https://json2video.com/docs/v2/api-reference/templates">Templates<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/templates/customizing-existing-templates"><a href="https://json2video.com/docs/v2/api-reference/templates/customizing-existing-templates">Customizing existing templates</a></li></ul></ul></li><li class="has-children" data-path="api-reference/exports"><a href="https://json2video.com/docs/v2/api-reference/exports">Exports<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/exports/webhooks"><a href="https://json2video.com/docs/v2/api-reference/exports/webhooks">Webhooks</a></li><li data-path="api-reference/exports/uploading-to-ftpsftp"><a href="https://json2video.com/docs/v2/api-reference/exports/uploading-to-ftpsftp">Uploading to FTP/SFTP</a></li><li data-path="api-reference/exports/email-notification"><a href="https://json2video.com/docs/v2/api-reference/exports/email-notification">Email notification</a></li></ul></ul></li><li data-path="api-reference/optimizing-rendering"><a href="https://json2video.com/docs/v2/api-reference/optimizing-rendering">Optimizing rendering</a></li></ul></ul></li><li class="has-children" data-path="no-code-integrations"><a href="https://json2video.com/docs/v2/no-code-integrations">No-code integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li class="has-children" data-path="no-code-integrations/makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom">Make.com<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/connect-json2video-to-makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/connect-json2video-to-makecom">Connect JSON2Video to Make.com</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules">JSON2Video modules<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video">Add Automatic Subtitles to a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio">Create Slideshow with Audio</a></li><li data-path="no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio">Concat a List of Videos with Background Audio</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules/toolbox"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox">Toolbox<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image">Add Voiceover to Video or Image</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video">Merge Audio and Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video">Trim a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/quote-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/quote-video">Quote Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel">Social Media Reel</a></li></ul></ul></li></ul></ul></li><li data-path="no-code-integrations/makecom/common-issues"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/common-issues">Common issues</a></li></ul></ul></li><li data-path="no-code-integrations/n8n"><a href="https://json2video.com/docs/v2/no-code-integrations/n8n">N8N</a></li></ul></ul></li><li data-path="sdks"><a href="https://json2video.com/docs/v2/sdks">SDKs</a></li><li class="has-children" data-path="pricing"><a href="https://json2video.com/docs/v2/pricing">Pricing<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="pricing/credit-consumption"><a href="https://json2video.com/docs/v2/pricing/credit-consumption">Credit consumption</a></li><li data-path="pricing/plans"><a href="https://json2video.com/docs/v2/pricing/plans">Plans</a></li><li data-path="pricing/faq"><a href="https://json2video.com/docs/v2/pricing/faq">FAQ</a></li></ul></ul></li><li class="has-children" data-path="troubleshooting"><a href="https://json2video.com/docs/v2/troubleshooting">Troubleshooting<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="troubleshooting/authentication"><a href="https://json2video.com/docs/v2/troubleshooting/authentication">Authentication</a></li><li data-path="troubleshooting/ai-asset-generation"><a href="https://json2video.com/docs/v2/troubleshooting/ai-asset-generation">AI asset generation</a></li></ul></ul></li></ul>                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main panel">
+            <div class="main-inner">
+            <div class="markdown-content">
+                    <h1>Duration and timing<a id="duration-and-timing" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#duration-and-timing" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h1>
+<p>Duration and timing are key aspects of creating dynamic videos with the JSON2Video API. Understanding how these properties interact is essential for controlling the flow and pacing of your video content.</p>
+<h2>Understanding movie, scene and element duration<a id="understanding-movie-scene-and-element-duration" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#understanding-movie-scene-and-element-duration" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<h3>Movie duration<a id="movie-duration" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#movie-duration" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>The movie duration cannot be set directly. Instead, it's dynamically calculated by the API based on the length of the scenes and elements it contains. The movie's final duration will be long enough to accommodate all scenes and any elements placed directly within the Movie elements array.</p>
+<h3>Scene duration<a id="scene-duration" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#scene-duration" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>The scene duration, on the other hand, can be either explicitly set or automatically calculated. When the <code>duration</code> property of a scene is set to a specific value (in seconds), the scene will last for that exact duration. If <code>duration</code> is set to <code>-1</code>, the API will calculate the scene's duration based on the elements it contains.</p>
+<h3>Element duration<a id="element-duration" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#element-duration" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>Elements can be placed either inside scenes or directly within the Movie elements array. The location of an element determines its container: if the element is inside a scene, the scene is its container. If the element is in the Movie elements array, the Movie itself is its container. This distinction is important for understanding how the <code>start</code> and <code>duration</code> properties are interpreted.</p>
+<p>Each element has three key properties that control its timing:</p>
+<ul>
+<li><strong><code>duration</code></strong>: Sets the length of time the element is visible or audible.
+<ul>
+<li>Use a positive value in <code>duration</code> to specify the element's length.</li>
+<li>A value of <code>-1</code> instructs the system to automatically set the duration based on the intrinsic length of the asset file.</li>
+<li>A value of <code>-2</code> sets the element's duration to match that of its parent scene (if it's inside a scene) or the movie (if it's in the movie elements array).</li>
+</ul>
+</li>
+<li><strong><code>start</code></strong>: Sets the starting point of the element, relative to the beginning of its container (either the scene or the movie).
+<ul>
+<li>Use a positive value in <code>start</code> to set the element's starting point relative to the beginning of its container.</li>
+<li>A value of <code>-1</code> instructs the system to move the element at the end of the container's timeline.</li>
+</ul>
+</li>
+<li><strong><code>extra-time</code></strong>: Adds additional time after the element's duration ends, extending its visibility or audibility.</li>
+</ul>
+<h3>Examples<a id="examples" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#examples" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<h4>Example 1: Scene with a 10-second video element<a id="example-1-scene-with-a-10-second-video-element" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-1-scene-with-a-10-second-video-element" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="0">Copy</button></div>
+<p>In this case, the scene will be 10 seconds long because the video element's duration is 10 seconds and the scene's duration defaults to automatically adjusting to fit its elements. The movie will also be 10 seconds long since it only contains this one scene.</p>
+<h4>Example 2: Scene with a 10-second video element, scene duration set to 5 seconds<a id="example-2-scene-with-a-10-second-video-element-scene-duration-set-to-5-seconds" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-2-scene-with-a-10-second-video-element-scene-duration-set-to-5-seconds" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="1">Copy</button></div>
+<p>Here, the scene's <code>duration</code> is explicitly set to 5 seconds, which will override the video element's duration. The scene will be trimmed to 5 seconds, and the video will only play for the first 5 seconds. The movie will also be 5 seconds long.</p>
+<h4>Example 3: Scene with a 10-second video element and a 20-second audio element<a id="example-3-scene-with-a-10-second-video-element-and-a-20-second-audio-element" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-3-scene-with-a-10-second-video-element-and-a-20-second-audio-element" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"audio"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/audio.mp3"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">20</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="2">Copy</button></div>
+<p>In this example, the scene's duration will be automatically calculated to be 20 seconds long, accommodating both the 10-second video and the 20-second audio. The movie will also be 20 seconds long.</p>
+<h4>Example 4: Scene with a 10-second video element and a 20-second audio element with the audio duration set to -2<a id="example-4-scene-with-a-10-second-video-element-and-a-20-second-audio-element-with-the-audio-duration-set-to--2" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-4-scene-with-a-10-second-video-element-and-a-20-second-audio-element-with-the-audio-duration-set-to--2" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"audio"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/audio.mp3"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-2</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="3">Copy</button></div>
+<p>In this scenario, the audio duration is set to <code>-2</code>, causing it to match the duration of its container (the scene). The API will first calculate the duration of the scene to accommodate the 10 second video element. Therefore, both the scene and audio will be 10 seconds long, and the audio will be trimmed to match the scene duration. The movie will also be 10 seconds long.</p>
+<h2>Looping videos or audios<a id="looping-videos-or-audios" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#looping-videos-or-audios" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<p>The <code>loop</code> property controls how many times a video or an audio element will repeat.</p>
+<ul>
+<li>
+<p>When <code>loop</code> is set to a positive integer (e.g., <code>loop: 2</code>), the video will play that number of times.</p>
+</li>
+<li>
+<p>When <code>loop</code> is set to <code>-1</code>, the video will loop indefinitely (play forever).</p>
+</li>
+</ul>
+<p>If the element is looping, you <strong>must</strong> extend the <code>duration</code> of the element to accommodate the loop.</p>
+<p>In case the element is looping forever, the <code>duration</code> property must be set to <code>-2</code> to extend the playback to the end of the container (either the parent scene or the movie). Not setting duration to -2 may result in the video or audio only playing once.</p>
+<h3>Examples<a id="examples-1" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#examples-1" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<h4>Example 1: Video element that loops forever in a scene with a duration of 30 seconds<a id="example-1-video-element-that-loops-forever-in-a-scene-with-a-duration-of-30-seconds" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-1-video-element-that-loops-forever-in-a-scene-with-a-duration-of-30-seconds" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">30</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"loop"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-2</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="4">Copy</button></div>
+<p>The video element is looping forever and its duration is set to match the container, but the scene has an explicit duration of 30 seconds. Therefore the video element will loop forever for the first 30 seconds. The movie will be 30 seconds long, matching the scene duration.</p>
+<h4>Example 2: Video element that loops forever while an audio element plays<a id="example-2-video-element-that-loops-forever-while-an-audio-element-plays" href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-2-video-element-that-loops-forever-while-an-audio-element-plays" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h4>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"video"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/video.mp4"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"loop"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-2</span>
+                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"audio"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/audio.mp3"</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="5">Copy</button></div>
+<p>The video element is looping forever and its duration is set to match the container.
+The scene duration will be calculated to accommodate the length of the audio element (whatever it is). Therefore the video element will loop forever for the duration of the audio. The movie will be as long as the scene, that indeed will be as long as the audio.</p>
+<div class="page-navigation"><a href="https://json2video.com/docs/v2/api-reference/mastering" class="prev-page">← Previous: Mastering</a><a href="https://json2video.com/docs/v2/api-reference/mastering/layering" class="next-page">Next: Layering →</a></div>                </div>
+            </div>
+        </main>
+        
+        <!-- Table of Contents (Right Panel) -->
+                <aside class="toc-sidebar panel">
+            <div class="toc-sidebar-inner">
+                <div class="table-of-contents">
+<h3>On This Page</h3>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#understanding-movie-scene-and-element-duration">Understanding movie, scene and element duration</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#movie-duration">Movie duration</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#scene-duration">Scene duration</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#element-duration">Element duration</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#examples">Examples</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-1-scene-with-a-10-second-video-element">Example 1: Scene with a 10-second video element</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-2-scene-with-a-10-second-video-element-scene-duration-set-to-5-seconds">Example 2: Scene with a 10-second video element, scene duration set to 5 seconds</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-3-scene-with-a-10-second-video-element-and-a-20-second-audio-element">Example 3: Scene with a 10-second video element and a 20-second audio element</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-4-scene-with-a-10-second-video-element-and-a-20-second-audio-element-with-the-audio-duration-set-to-2">Example 4: Scene with a 10-second video element and a 20-second audio element with the audio duration set to -2</a></li>
+</ul>
+</ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#looping-videos-or-audios">Looping videos or audios</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#examples">Examples</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-1-video-element-that-loops-forever-in-a-scene-with-a-duration-of-30-seconds">Example 1: Video element that loops forever in a scene with a duration of 30 seconds</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing#example-2-video-element-that-loops-forever-while-an-audio-element-plays">Example 2: Video element that loops forever while an audio element plays</a></li>
+</ul>
+</ul>
+</ul>
+</div>            </div>
+        </aside>
+            </div>
+    
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/highlight.min.js"></script>
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/javascript.min.js"></script>
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/json.min.js"></script>
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/bash.min.js"></script>
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/php.min.js"></script>
+    <script src="./Duration and timing - JSON2VIDEO Documentation_files/app.js"></script>
+
+
+</body></html>

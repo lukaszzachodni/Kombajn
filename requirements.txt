@@ -12,4 +12,7 @@ flower==2.0.1
 moviepy==1.0.3
 numpy<2.0.0
 pytest==8.3.3
-# UsuniÄ™to streamlit-pydantic (niekompatybilne z Pydantic v2)
+gTTS==2.5.1
+edge-tts==6.1.12
+pillow==10.4.0
+# Usunięto streamlit-pydantic (niekompatybilne z Pydantic v2)

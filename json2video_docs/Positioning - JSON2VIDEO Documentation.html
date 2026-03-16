@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)https://json2video.com/docs/v2/api-reference/mastering/positioning -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script type="text/javascript" async="" src="./Positioning - JSON2VIDEO Documentation_files/analytics.js"></script><script type="text/javascript" async="" src="./Positioning - JSON2VIDEO Documentation_files/js"></script><script async="" src="./Positioning - JSON2VIDEO Documentation_files/js(1)"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-Z0YPW0QY8X');
+    </script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive documentation for our API service">
+    <title>Positioning - JSON2VIDEO Documentation</title>
+    <!-- <base href="/docs/v2/"> -->
+    <link rel="stylesheet" href="./Positioning - JSON2VIDEO Documentation_files/styles.css">
+    <link rel="stylesheet" href="./Positioning - JSON2VIDEO Documentation_files/highlight-github.min.css">
+    <link rel="icon" type="image/svg+xml" href="./Positioning - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <link rel="alternate icon" href="./Positioning - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <!-- SEO tags -->
+    <meta property="og:title" content="Positioning">
+    <meta property="og:description" content="Comprehensive documentation for our API service">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Positioning">
+    <meta name="twitter:description" content="Comprehensive documentation for our API service">
+</head>
+<body>
+    <!-- Header -->
+    <!-- Header -->
+<header class="header">
+    <div class="header-color color-gradient"></div>
+    <div class="header-inner">
+        <a href="https://json2video.com/docs/v2/" class="logo">
+            <img src="./Positioning - JSON2VIDEO Documentation_files/json2video-logo.svg" style="height:20px;">
+            JSON2VIDEO Documentation        </a>
+        <div>
+            <!-- Search Box -->
+            <div class="search-container">
+                <form id="searchForm" action="https://json2video.com/docs/v2/chatbot/" method="GET">
+                    <input type="text" id="searchInput" name="q" placeholder="Search docs... (Press / or ⌘K)" aria-label="Search documentation">
+                    <button type="submit" class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div>
+            <div class="header-buttons">
+                <a class="header-button" href="https://json2video.com/docs/getting-started.html">Archived docs</a>
+                <a id="getAPIKeyButton" class="header-button" href="https://json2video.com/get-api-key/">Get your API Key</a>
+                <a id="avatar" href="https://json2video.com/dashboard/" title="Dashboard">
+                    <svg id="avatar-icon" width="32px" height="32px" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M12 6a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M6.5 19.5c0-2.5 2.5-4.5 5.5-4.5s5.5 2 5.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </a>
+                <script>
+                    function replaceAvatarWhenLoggedIn() {
+                        console.log("Replace avatar when logged in");
+                        // check if user is signed in
+                        const userProfile = localStorage.getItem("userProfile");
+                        if (userProfile) {
+                            try {
+                                const profile = JSON.parse(userProfile);
+                                const avatar = document.getElementById("avatar");
+                                if (avatar && profile && profile.picture) {
+                                    avatar.innerHTML = `<img src="${profile.picture}" class="rounded-full h-10 w-10">`;
+                                    const getAPIKeyButton = document.getElementById("getAPIKeyButton");
+                                    if (getAPIKeyButton) getAPIKeyButton.style.display = "none";
+                                    const getAPIKeyButtonMobile = document.getElementById("getAPIKeyButtonMobile");
+                                    if (getAPIKeyButtonMobile) getAPIKeyButtonMobile.style.display = "none";
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }
+                    replaceAvatarWhenLoggedIn();
+                </script>
+            </div>
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+    </div>
+    <div class="header-tabs">
+        <a href="https://json2video.com/docs/v2/" class="header-tab header-active-tab">
+            <div class="header-tab-text">Documentation</div>
+        </a>
+        <a href="https://json2video.com/docs/v2/chatbot/" class="header-tab ">
+            <div class="header-tab-text">🤖 AI Assistant</div>
+        </a>
+    </div>
+</header>
+
+<!-- Search Keyboard Shortcuts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Check if not already focused in an input or textarea
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                // Slash key (/) shortcut
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+                
+                // Cmd+K or Ctrl+K shortcut
+                if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            }
+        });
+
+        // Focus the search input when the search icon is clicked
+        document.querySelector('.search-button').addEventListener('click', function(e) {
+            if (document.getElementById('searchInput').value.trim() === '') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    });
+</script>    
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar panel">
+            <div class="sidebar-inner">
+                <nav class="sidebar-nav">
+                    <ul><li class="has-children" data-path="getting-started"><a href="https://json2video.com/docs/v2/getting-started">Getting Started<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/what-is-json2video"><a href="https://json2video.com/docs/v2/getting-started/what-is-json2video">What is JSON2Video</a></li><li class="has-children" data-path="getting-started/how-it-works"><a href="https://json2video.com/docs/v2/getting-started/how-it-works">How it works<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/how-it-works/using-the-api-programmatically"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-the-api-programmatically">Using the API programmatically</a></li><li data-path="getting-started/how-it-works/using-no-code-tools"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-no-code-tools">Using no-code tools</a></li></ul></ul></li><li data-path="getting-started/basic-concepts"><a href="https://json2video.com/docs/v2/getting-started/basic-concepts">Basic Concepts</a></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference"><a href="https://json2video.com/docs/v2/api-reference">API Reference<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/getting-your-api-key"><a href="https://json2video.com/docs/v2/api-reference/getting-your-api-key">Getting your API key</a></li><li data-path="api-reference/authentication"><a href="https://json2video.com/docs/v2/api-reference/authentication">Authentication</a></li><li class="has-children" data-path="api-reference/api-endpoints"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints">API Endpoints<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/api-endpoints/movies"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints/movies">Movies</a></li></ul></ul></li><li class="has-children" data-path="api-reference/json-syntax"><a href="https://json2video.com/docs/v2/api-reference/json-syntax">JSON Syntax<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/movie"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/movie">Movie</a></li><li data-path="api-reference/json-syntax/scene"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/scene">Scene</a></li><li class="has-children" data-path="api-reference/json-syntax/element"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element">Element<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/element/image"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/image">Image</a></li><li data-path="api-reference/json-syntax/element/video"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/video">Video</a></li><li data-path="api-reference/json-syntax/element/text"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/text">Text</a></li><li data-path="api-reference/json-syntax/element/component"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/component">Component</a></li><li data-path="api-reference/json-syntax/element/audio"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audio">Audio</a></li><li data-path="api-reference/json-syntax/element/audiogram"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audiogram">Audiogram</a></li><li data-path="api-reference/json-syntax/element/voice"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/voice">Voice</a></li><li data-path="api-reference/json-syntax/element/subtitles"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles">Subtitles</a></li></ul></ul></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference/mastering"><a href="https://json2video.com/docs/v2/api-reference/mastering">Mastering<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/mastering/duration-and-timing"><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing">Duration and timing</a></li><li data-path="api-reference/mastering/layering"><a href="https://json2video.com/docs/v2/api-reference/mastering/layering">Layering</a></li><li class="active-page active-path expanded" data-path="api-reference/mastering/positioning"><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning" class="active">Positioning</a></li><li data-path="api-reference/mastering/caching-system"><a href="https://json2video.com/docs/v2/api-reference/mastering/caching-system">Caching system</a></li><li data-path="api-reference/mastering/variables"><a href="https://json2video.com/docs/v2/api-reference/mastering/variables">Variables</a></li><li data-path="api-reference/mastering/expressions"><a href="https://json2video.com/docs/v2/api-reference/mastering/expressions">Expressions</a></li><li data-path="api-reference/mastering/conditional-elements"><a href="https://json2video.com/docs/v2/api-reference/mastering/conditional-elements">Conditional elements</a></li><li data-path="api-reference/mastering/dynamic-number-of-scenes"><a href="https://json2video.com/docs/v2/api-reference/mastering/dynamic-number-of-scenes">Dynamic number of scenes</a></li></ul></ul></li><li class="has-children" data-path="api-reference/ai-integrations"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations">AI integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/ai-integrations/elevenlabs"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations/elevenlabs">ElevenLabs</a></li></ul></ul></li><li class="has-children" data-path="api-reference/templates"><a href="https://json2video.com/docs/v2/api-reference/templates">Templates<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/templates/customizing-existing-templates"><a href="https://json2video.com/docs/v2/api-reference/templates/customizing-existing-templates">Customizing existing templates</a></li></ul></ul></li><li class="has-children" data-path="api-reference/exports"><a href="https://json2video.com/docs/v2/api-reference/exports">Exports<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/exports/webhooks"><a href="https://json2video.com/docs/v2/api-reference/exports/webhooks">Webhooks</a></li><li data-path="api-reference/exports/uploading-to-ftpsftp"><a href="https://json2video.com/docs/v2/api-reference/exports/uploading-to-ftpsftp">Uploading to FTP/SFTP</a></li><li data-path="api-reference/exports/email-notification"><a href="https://json2video.com/docs/v2/api-reference/exports/email-notification">Email notification</a></li></ul></ul></li><li data-path="api-reference/optimizing-rendering"><a href="https://json2video.com/docs/v2/api-reference/optimizing-rendering">Optimizing rendering</a></li></ul></ul></li><li class="has-children" data-path="no-code-integrations"><a href="https://json2video.com/docs/v2/no-code-integrations">No-code integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li class="has-children" data-path="no-code-integrations/makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom">Make.com<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/connect-json2video-to-makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/connect-json2video-to-makecom">Connect JSON2Video to Make.com</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules">JSON2Video modules<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video">Add Automatic Subtitles to a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio">Create Slideshow with Audio</a></li><li data-path="no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio">Concat a List of Videos with Background Audio</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules/toolbox"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox">Toolbox<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image">Add Voiceover to Video or Image</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video">Merge Audio and Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video">Trim a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/quote-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/quote-video">Quote Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel">Social Media Reel</a></li></ul></ul></li></ul></ul></li><li data-path="no-code-integrations/makecom/common-issues"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/common-issues">Common issues</a></li></ul></ul></li><li data-path="no-code-integrations/n8n"><a href="https://json2video.com/docs/v2/no-code-integrations/n8n">N8N</a></li></ul></ul></li><li data-path="sdks"><a href="https://json2video.com/docs/v2/sdks">SDKs</a></li><li class="has-children" data-path="pricing"><a href="https://json2video.com/docs/v2/pricing">Pricing<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="pricing/credit-consumption"><a href="https://json2video.com/docs/v2/pricing/credit-consumption">Credit consumption</a></li><li data-path="pricing/plans"><a href="https://json2video.com/docs/v2/pricing/plans">Plans</a></li><li data-path="pricing/faq"><a href="https://json2video.com/docs/v2/pricing/faq">FAQ</a></li></ul></ul></li><li class="has-children" data-path="troubleshooting"><a href="https://json2video.com/docs/v2/troubleshooting">Troubleshooting<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="troubleshooting/authentication"><a href="https://json2video.com/docs/v2/troubleshooting/authentication">Authentication</a></li><li data-path="troubleshooting/ai-asset-generation"><a href="https://json2video.com/docs/v2/troubleshooting/ai-asset-generation">AI asset generation</a></li></ul></ul></li></ul>                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main panel">
+            <div class="main-inner">
+            <div class="markdown-content">
+                    <h1>Positioning<a id="positioning" href="https://json2video.com/docs/v2/api-reference/mastering/positioning#positioning" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h1>
+<p>JSON2Video provides flexible options for positioning elements within your video scenes. You can use predefined positions for quick placement or define custom coordinates for precise control.</p>
+<h2>Positioning elements<a id="positioning-elements" href="https://json2video.com/docs/v2/api-reference/mastering/positioning#positioning-elements" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<p>Elements can be positioned using the <code>position</code> property or with the <code>x</code> and <code>y</code> properties if <code>position</code> is set to <code>custom</code>.</p>
+<h3>Predefined Positions<a id="predefined-positions" href="https://json2video.com/docs/v2/api-reference/mastering/positioning#predefined-positions" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>The <code>position</code> property allows you to quickly place an element in common locations. The <code>position</code> property intentionally leaves <strong>a 5% gap</strong> between the element and the edge of the movie canvas.</p>
+<p>It accepts the following values:</p>
+<ul>
+<li><code>top-left</code>:  Places the element in the top-left corner.</li>
+<li><code>top-right</code>: Places the element in the top-right corner.</li>
+<li><code>bottom-right</code>: Places the element in the bottom-right corner.</li>
+<li><code>bottom-left</code>: Places the element in the bottom-left corner.</li>
+<li><code>center-center</code>: Places the element in the center of the scene, both horizontally and vertically.</li>
+<li><code>custom</code>: Places the element at the coordinates specified in the <code>x</code> and <code>y</code> properties.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"image"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"src"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"https://example.com/image.png"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"top-right"</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="0">Copy</button></div>
+<h3>Custom Coordinates<a id="custom-coordinates" href="https://json2video.com/docs/v2/api-reference/mastering/positioning#custom-coordinates" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>For more precise placement, set the <code>position</code> property to <code>custom</code>. This enables the use of the <code>x</code> and <code>y</code> properties.</p>
+<ul>
+<li><code>x</code>: The horizontal position of the element in pixels, relative to the left edge of the movie canvas.  A value of <code>0</code> places the element at the left edge.</li>
+<li><code>y</code>: The vertical position of the element in pixels, relative to the top edge of the movie canvas. A value of <code>0</code> places the element at the top edge.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"text"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Custom Position"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"custom"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"x"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">100</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"y"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="1">Copy</button></div>
+<h2>Positioning the Text and Component elements<a id="positioning-the-text-and-component-elements" href="https://json2video.com/docs/v2/api-reference/mastering/positioning#positioning-the-text-and-component-elements" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<p>The <strong>Text and Component elements</strong> behave exactly the same described above but have some additional properties to control the textbox alignment.</p>
+<p>It consists of two main concepts:</p>
+<ol>
+<li>
+<p><strong>Element Canvas Area</strong>:</p>
+<ul>
+<li>This is the outer area that can occupy the full size of the video canvas. It serves as the boundary within which the text box is placed. The canvas can be adjusted to fit the full video size or a custom size with the <code>position</code>, <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code> properties as described above.</li>
+</ul>
+</li>
+<li>
+<p><strong>Textbox Inside the Canvas</strong>:</p>
+<ul>
+<li>Within the text element canvas, there is a textbox that can be aligned both vertically and horizontally. This alignment feature ensures that regardless of the text length, the textbox can be positioned accurately within the canvas. You can control the alignment of the textbox with the <code>vertical-position</code> and <code>horizontal-position</code> properties inside the <code>settings</code> object.</li>
+</ul>
+</li>
+</ol>
+<p><em>Note: Not all <code>component</code> elements have a textbox and this does not apply to them.</em></p>
+<p>Therefore, the final position of the textbox relative to the video canvas is determined by the combination of:</p>
+<ul>
+<li>The size and position of the element canvas.</li>
+<li>The alignment settings of the textbox within the canvas.</li>
+</ul>
+<p>This approach is particularly useful for dynamically positioning the textbox. Even if the textbox expands or contracts due to varying text lengths, it will maintain its alignment within the canvas. This ensures a consistent and visually appealing presentation of text in your video, regardless of content changes.</p>
+<p><strong>Example: Positioning a Text element relative to the video canvas</strong></p>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"resolution"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"full-hd"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"text"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Hello World"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"settings"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"vertical-position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"bottom"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"horizontal-position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"left"</span>
+          <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="2">Copy</button></div>
+<p>In this example, the text element is positioned at the bottom-left corner of the video canvas:</p>
+<ul>
+<li>The <code>position</code> value is <code>custom</code> by default, the <code>x</code> and <code>y</code> values are <code>0</code> by default and the <code>width</code> and <code>height</code> values are <code>-1</code> by default. This means that by default, the text element canvas occupies the full size of the video canvas.</li>
+<li>The textbox is then aligned to the bottom and left edges of the canvas using the <code>vertical-position</code> and <code>horizontal-position</code> properties inside the <code>settings</code> object.</li>
+</ul>
+<p><strong>Example: Positioning a Text element precisely within the video canvas</strong></p>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"resolution"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"full-hd"</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"duration"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"text"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Hello World"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"custom"</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"x"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"y"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">100</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">"settings"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"vertical-position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"top"</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">"horizontal-position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"left"</span>
+          <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="3">Copy</button></div>
+<p>In this example, the text element is positioned at the 200, 100 coordinates:</p>
+<ul>
+<li>The <code>position</code> value is <code>custom</code> to allow <code>x</code> and <code>y</code> values to be used.</li>
+<li>The element canvas is <em>moved</em> to the 200, 100 coordinates with the <code>x</code> and <code>y</code> values.</li>
+<li>The textbox is then aligned to the top and left edges of the element canvas using the <code>vertical-position</code> and <code>horizontal-position</code>.</li>
+</ul>
+<div class="page-navigation"><a href="https://json2video.com/docs/v2/api-reference/mastering/layering" class="prev-page">← Previous: Layering</a><a href="https://json2video.com/docs/v2/api-reference/mastering/caching-system" class="next-page">Next: Caching system →</a></div>                </div>
+            </div>
+        </main>
+        
+        <!-- Table of Contents (Right Panel) -->
+                <aside class="toc-sidebar panel">
+            <div class="toc-sidebar-inner">
+                <div class="table-of-contents">
+<h3>On This Page</h3>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning#positioning-elements">Positioning elements</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning#predefined-positions">Predefined Positions</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning#custom-coordinates">Custom Coordinates</a></li>
+</ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning#positioning-the-text-and-component-elements">Positioning the Text and Component elements</a></li>
+</ul>
+</div>            </div>
+        </aside>
+            </div>
+    
+    <script src="./Positioning - JSON2VIDEO Documentation_files/highlight.min.js"></script>
+    <script src="./Positioning - JSON2VIDEO Documentation_files/javascript.min.js"></script>
+    <script src="./Positioning - JSON2VIDEO Documentation_files/json.min.js"></script>
+    <script src="./Positioning - JSON2VIDEO Documentation_files/bash.min.js"></script>
+    <script src="./Positioning - JSON2VIDEO Documentation_files/php.min.js"></script>
+    <script src="./Positioning - JSON2VIDEO Documentation_files/app.js"></script>
+
+
+</body></html>

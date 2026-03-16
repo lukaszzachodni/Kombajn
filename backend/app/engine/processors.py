@@ -1,60 +1,109 @@
-from typing import Any, Tuple
-import numpy as np
-from moviepy.editor import ColorClip, TextClip, ImageClip
+from typing import Any, Dict, Tuple, Optional
+from moviepy.editor import ImageClip, TextClip, AudioFileClip, VideoFileClip, ColorClip, afx, vfx
 from moviepy.Clip import Clip
-from .base import ClipProcessor
+from .j2v_base_processor import J2VBaseProcessor
+from .j2v_models import ImageElement, TextElement, AudioElement, VideoElement, VoiceElement, AudiogramElement, SubtitlesElement
 
-def _parse_color(color: Any) -> Tuple[int, int, int]:
-    """Ensures color is a valid RGB tuple for MoviePy/Numpy."""
-    if isinstance(color, str):
-        # MoviePy's ColorClip sometimes struggles with string names in CompositeVideoClip
-        # Mapping common names or just using a safe default. 
-        # For full stability, we should use a library like webcolors, 
-        # but for TDD we will force RGB logic.
-        color_map = {
-            "red": (255, 0, 0),
-            "green": (0, 255, 0),
-            "blue": (0, 0, 255),
-            "black": (0, 0, 0),
-            "white": (255, 255, 255),
-            "purple": (128, 0, 128)
-        }
-        return color_map.get(color.lower(), (0, 0, 0))
-    return tuple(color)
+class J2VProcessor:
+    """Interface for J2V processors."""
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        pass
 
-class ColorProcessor(ClipProcessor):
-    def create_clip(self, width: int, height: int, context: Any, **kwargs) -> Clip:
-        rgb = _parse_color(context.color)
-        # Force 3-channel RGB array creation
-        return ColorClip(size=(width, height), color=rgb, duration=context.duration)
+class J2VImageProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = ImageElement(**element_data)
+        clip = ImageClip(el.src)
+        if el.resize == "cover":
+            clip = clip.resize(width=width) if (width/height > clip.w/clip.h) else clip.resize(height=height)
+        elif el.resize == "fit":
+            clip = clip.resize(width=width) if (width/height < clip.w/clip.h) else clip.resize(height=height)
+        pos_map = {"top-left": (0.05*width, 0.05*height), "center-center": ("center", "center")}
+        clip = clip.set_position(pos_map.get(el.position, (el.x, el.y)))
+        return J2VBaseProcessor.apply_common_properties(clip, el, container_duration)
 
-class ImageProcessor(ClipProcessor):
-    def create_clip(self, width: int, height: int, context: Any, **kwargs) -> Clip:
-        clip = ImageClip(context.path).set_duration(context.duration)
-        return clip.resize(height=height)
-
-class TextProcessor(ClipProcessor):
-    def create_clip(self, width: int, height: int, context: Any, **kwargs) -> Clip:
-        bg_duration = kwargs.get("bg_duration", 5.0)
-        duration = context.duration or bg_duration
-        
-        # 1. Create text as a mask (label)
-        txt = TextClip(
-            context.text,
-            fontsize=context.fontsize,
-            color=context.color,
-            font=context.font,
+class J2VTextProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = TextElement(**element_data)
+        settings = el.settings
+        duration = el.duration if el.duration > 0 else container_duration
+        txt_clip = TextClip(
+            el.text,
+            fontsize=settings.get("font-size", 70),
+            color=settings.get("font-color", "white"),
+            font=settings.get("font-family", "DejaVu-Sans"),
             method="label"
-        ).set_duration(duration).set_start(context.start_time)
+        ).set_duration(duration)
+        if txt_clip.ismask: txt_clip = txt_clip.to_RGB()
+        v_pos = settings.get("vertical-position", "center")
+        h_pos = settings.get("horizontal-position", "center")
+        txt_clip = txt_clip.set_position((h_pos, v_pos)).set_start(el.start)
+        return J2VBaseProcessor.apply_common_properties(txt_clip, el, container_duration)
+
+class J2VAudioProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = AudioElement(**element_data)
+        audio = AudioFileClip(el.src)
+        if el.seek > 0: audio = audio.subclip(el.seek)
         
-        # 2. Definitive Fix for Numpy broadcast:
-        # Wrap the text clip into a container that matches the project's RGB structure.
-        # .on_color creates a new RGB clip with the text blitted on it.
-        return (txt.on_color(
-                    size=(width, height), 
-                    color=(0,0,0), 
-                    pos=context.position, 
-                    col_opacity=0
-                )
-                .set_duration(duration)
-                .set_start(context.start_time))
+        # Hard Fix: Ensure audio clip never exceeds its intrinsic length to avoid OSError
+        safe_duration = el.duration if el.duration > 0 else (container_duration if el.duration == -2 else audio.duration)
+        if el.loop == -1 or el.loop > 1:
+            audio = audio.fx(afx.audio_loop, duration=safe_duration)
+        else:
+            # Cap at actual length if not looping
+            audio = audio.subclip(0, min(audio.duration, safe_duration))
+            
+        if el.muted: audio = audio.volumex(0)
+        else: audio = audio.volumex(el.volume)
+        
+        return J2VBaseProcessor.apply_common_properties(audio, el, container_duration)
+
+class J2VVideoProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = VideoElement(**element_data)
+        clip = VideoFileClip(el.src)
+        if el.seek > 0: clip = clip.subclip(el.seek)
+        if el.resize == "cover":
+            clip = clip.resize(width=width) if (width/height > clip.w/clip.h) else clip.resize(height=height)
+        elif el.resize == "fit":
+            clip = clip.resize(width=width) if (width/height < clip.w/clip.h) else clip.resize(height=height)
+        if el.flip_horizontal: clip = clip.fx(vfx.mirror_x)
+        if el.flip_vertical: clip = clip.fx(vfx.mirror_y)
+        if el.muted: clip = clip.without_audio()
+        elif el.volume != 1.0: clip = clip.volumex(el.volume)
+        pos_map = {"top-left": (0.05*width, 0.05*height), "center-center": ("center", "center")}
+        clip = clip.set_position(pos_map.get(el.position, (el.x, el.y)))
+        duration = el.duration if el.duration > 0 else container_duration
+        if el.loop == -1 or el.loop > 1: clip = clip.fx(vfx.loop, duration=duration)
+        return J2VBaseProcessor.apply_common_properties(clip, el, container_duration)
+
+class J2VVoiceProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = VoiceElement(**element_data)
+        from gtts import gTTS
+        import uuid
+        from pathlib import Path
+        temp_path = Path("/data/ssd/temp/j2v_tts") / f"tts_{uuid.uuid4()}.mp3"
+        temp_path.parent.mkdir(parents=True, exist_ok=True)
+        lang = el.voice.split("-")[0] if el.voice and "-" in el.voice else "en"
+        gTTS(text=el.text, lang=lang).save(str(temp_path))
+        audio = AudioFileClip(str(temp_path))
+        
+        # Hard Fix: Subclip to actual duration to prevent OSError in mixing
+        audio = audio.subclip(0, audio.duration)
+        
+        if el.muted: audio = audio.volumex(0)
+        else: audio = audio.volumex(el.volume)
+        return J2VBaseProcessor.apply_common_properties(audio, el, container_duration)
+
+class J2VAudiogramProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = AudiogramElement(**element_data)
+        clip = ColorClip(size=(width//2, 100), color=(255,255,255), duration=container_duration).set_opacity(el.opacity).set_position(("center", "bottom"))
+        return J2VBaseProcessor.apply_common_properties(clip, el, container_duration)
+
+class J2VSubtitlesProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = SubtitlesElement(**element_data)
+        txt = TextClip("Local Subtitles Placeholder", fontsize=40, color='yellow').set_position(("center", "bottom"))
+        return J2VBaseProcessor.apply_common_properties(txt, el, container_duration)

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<!-- saved from url=(0074)https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script type="text/javascript" async="" src="./Subtitles - JSON2VIDEO Documentation_files/analytics.js"></script><script type="text/javascript" async="" src="./Subtitles - JSON2VIDEO Documentation_files/js"></script><script async="" src="./Subtitles - JSON2VIDEO Documentation_files/js(1)"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-Z0YPW0QY8X');
+    </script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive documentation for our API service">
+    <title>Subtitles - JSON2VIDEO Documentation</title>
+    <!-- <base href="/docs/v2/"> -->
+    <link rel="stylesheet" href="./Subtitles - JSON2VIDEO Documentation_files/styles.css">
+    <link rel="stylesheet" href="./Subtitles - JSON2VIDEO Documentation_files/highlight-github.min.css">
+    <link rel="icon" type="image/svg+xml" href="./Subtitles - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <link rel="alternate icon" href="./Subtitles - JSON2VIDEO Documentation_files/json2video-logo.svg">
+    <!-- SEO tags -->
+    <meta property="og:title" content="Subtitles">
+    <meta property="og:description" content="Comprehensive documentation for our API service">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Subtitles">
+    <meta name="twitter:description" content="Comprehensive documentation for our API service">
+</head>
+<body>
+    <!-- Header -->
+    <!-- Header -->
+<header class="header">
+    <div class="header-color color-gradient"></div>
+    <div class="header-inner">
+        <a href="https://json2video.com/docs/v2/" class="logo">
+            <img src="./Subtitles - JSON2VIDEO Documentation_files/json2video-logo.svg" style="height:20px;">
+            JSON2VIDEO Documentation        </a>
+        <div>
+            <!-- Search Box -->
+            <div class="search-container">
+                <form id="searchForm" action="https://json2video.com/docs/v2/chatbot/" method="GET">
+                    <input type="text" id="searchInput" name="q" placeholder="Search docs... (Press / or ⌘K)" aria-label="Search documentation">
+                    <button type="submit" class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div>
+            <div class="header-buttons">
+                <a class="header-button" href="https://json2video.com/docs/getting-started.html">Archived docs</a>
+                <a id="getAPIKeyButton" class="header-button" href="https://json2video.com/get-api-key/">Get your API Key</a>
+                <a id="avatar" href="https://json2video.com/dashboard/" title="Dashboard">
+                    <svg id="avatar-icon" width="32px" height="32px" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M12 6a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M6.5 19.5c0-2.5 2.5-4.5 5.5-4.5s5.5 2 5.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </a>
+                <script>
+                    function replaceAvatarWhenLoggedIn() {
+                        console.log("Replace avatar when logged in");
+                        // check if user is signed in
+                        const userProfile = localStorage.getItem("userProfile");
+                        if (userProfile) {
+                            try {
+                                const profile = JSON.parse(userProfile);
+                                const avatar = document.getElementById("avatar");
+                                if (avatar && profile && profile.picture) {
+                                    avatar.innerHTML = `<img src="${profile.picture}" class="rounded-full h-10 w-10">`;
+                                    const getAPIKeyButton = document.getElementById("getAPIKeyButton");
+                                    if (getAPIKeyButton) getAPIKeyButton.style.display = "none";
+                                    const getAPIKeyButtonMobile = document.getElementById("getAPIKeyButtonMobile");
+                                    if (getAPIKeyButtonMobile) getAPIKeyButtonMobile.style.display = "none";
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }
+                    replaceAvatarWhenLoggedIn();
+                </script>
+            </div>
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+    </div>
+    <div class="header-tabs">
+        <a href="https://json2video.com/docs/v2/" class="header-tab header-active-tab">
+            <div class="header-tab-text">Documentation</div>
+        </a>
+        <a href="https://json2video.com/docs/v2/chatbot/" class="header-tab ">
+            <div class="header-tab-text">🤖 AI Assistant</div>
+        </a>
+    </div>
+</header>
+
+<!-- Search Keyboard Shortcuts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Check if not already focused in an input or textarea
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                // Slash key (/) shortcut
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+                
+                // Cmd+K or Ctrl+K shortcut
+                if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            }
+        });
+
+        // Focus the search input when the search icon is clicked
+        document.querySelector('.search-button').addEventListener('click', function(e) {
+            if (document.getElementById('searchInput').value.trim() === '') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    });
+</script>    
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar panel">
+            <div class="sidebar-inner">
+                <nav class="sidebar-nav">
+                    <ul><li class="has-children" data-path="getting-started"><a href="https://json2video.com/docs/v2/getting-started">Getting Started<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/what-is-json2video"><a href="https://json2video.com/docs/v2/getting-started/what-is-json2video">What is JSON2Video</a></li><li class="has-children" data-path="getting-started/how-it-works"><a href="https://json2video.com/docs/v2/getting-started/how-it-works">How it works<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="getting-started/how-it-works/using-the-api-programmatically"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-the-api-programmatically">Using the API programmatically</a></li><li data-path="getting-started/how-it-works/using-no-code-tools"><a href="https://json2video.com/docs/v2/getting-started/how-it-works/using-no-code-tools">Using no-code tools</a></li></ul></ul></li><li data-path="getting-started/basic-concepts"><a href="https://json2video.com/docs/v2/getting-started/basic-concepts">Basic Concepts</a></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference"><a href="https://json2video.com/docs/v2/api-reference">API Reference<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/getting-your-api-key"><a href="https://json2video.com/docs/v2/api-reference/getting-your-api-key">Getting your API key</a></li><li data-path="api-reference/authentication"><a href="https://json2video.com/docs/v2/api-reference/authentication">Authentication</a></li><li class="has-children" data-path="api-reference/api-endpoints"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints">API Endpoints<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/api-endpoints/movies"><a href="https://json2video.com/docs/v2/api-reference/api-endpoints/movies">Movies</a></li></ul></ul></li><li class="has-children active-path expanded" data-path="api-reference/json-syntax"><a href="https://json2video.com/docs/v2/api-reference/json-syntax">JSON Syntax<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/movie"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/movie">Movie</a></li><li data-path="api-reference/json-syntax/scene"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/scene">Scene</a></li><li class="has-children active-path expanded" data-path="api-reference/json-syntax/element"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element">Element<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/json-syntax/element/image"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/image">Image</a></li><li data-path="api-reference/json-syntax/element/video"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/video">Video</a></li><li data-path="api-reference/json-syntax/element/text"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/text">Text</a></li><li data-path="api-reference/json-syntax/element/component"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/component">Component</a></li><li data-path="api-reference/json-syntax/element/audio"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audio">Audio</a></li><li data-path="api-reference/json-syntax/element/audiogram"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/audiogram">Audiogram</a></li><li data-path="api-reference/json-syntax/element/voice"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/voice">Voice</a></li><li class="active-page active-path expanded" data-path="api-reference/json-syntax/element/subtitles"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles" class="active">Subtitles</a></li></ul></ul></li></ul></ul></li><li class="has-children" data-path="api-reference/mastering"><a href="https://json2video.com/docs/v2/api-reference/mastering">Mastering<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/mastering/duration-and-timing"><a href="https://json2video.com/docs/v2/api-reference/mastering/duration-and-timing">Duration and timing</a></li><li data-path="api-reference/mastering/layering"><a href="https://json2video.com/docs/v2/api-reference/mastering/layering">Layering</a></li><li data-path="api-reference/mastering/positioning"><a href="https://json2video.com/docs/v2/api-reference/mastering/positioning">Positioning</a></li><li data-path="api-reference/mastering/caching-system"><a href="https://json2video.com/docs/v2/api-reference/mastering/caching-system">Caching system</a></li><li data-path="api-reference/mastering/variables"><a href="https://json2video.com/docs/v2/api-reference/mastering/variables">Variables</a></li><li data-path="api-reference/mastering/expressions"><a href="https://json2video.com/docs/v2/api-reference/mastering/expressions">Expressions</a></li><li data-path="api-reference/mastering/conditional-elements"><a href="https://json2video.com/docs/v2/api-reference/mastering/conditional-elements">Conditional elements</a></li><li data-path="api-reference/mastering/dynamic-number-of-scenes"><a href="https://json2video.com/docs/v2/api-reference/mastering/dynamic-number-of-scenes">Dynamic number of scenes</a></li></ul></ul></li><li class="has-children" data-path="api-reference/ai-integrations"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations">AI integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/ai-integrations/elevenlabs"><a href="https://json2video.com/docs/v2/api-reference/ai-integrations/elevenlabs">ElevenLabs</a></li></ul></ul></li><li class="has-children" data-path="api-reference/templates"><a href="https://json2video.com/docs/v2/api-reference/templates">Templates<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/templates/customizing-existing-templates"><a href="https://json2video.com/docs/v2/api-reference/templates/customizing-existing-templates">Customizing existing templates</a></li></ul></ul></li><li class="has-children" data-path="api-reference/exports"><a href="https://json2video.com/docs/v2/api-reference/exports">Exports<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="api-reference/exports/webhooks"><a href="https://json2video.com/docs/v2/api-reference/exports/webhooks">Webhooks</a></li><li data-path="api-reference/exports/uploading-to-ftpsftp"><a href="https://json2video.com/docs/v2/api-reference/exports/uploading-to-ftpsftp">Uploading to FTP/SFTP</a></li><li data-path="api-reference/exports/email-notification"><a href="https://json2video.com/docs/v2/api-reference/exports/email-notification">Email notification</a></li></ul></ul></li><li data-path="api-reference/optimizing-rendering"><a href="https://json2video.com/docs/v2/api-reference/optimizing-rendering">Optimizing rendering</a></li></ul></ul></li><li class="has-children" data-path="no-code-integrations"><a href="https://json2video.com/docs/v2/no-code-integrations">No-code integrations<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li class="has-children" data-path="no-code-integrations/makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom">Make.com<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/connect-json2video-to-makecom"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/connect-json2video-to-makecom">Connect JSON2Video to Make.com</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules">JSON2Video modules<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/add-automatic-subtitles-to-a-video">Add Automatic Subtitles to a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/create-slideshow-with-audio">Create Slideshow with Audio</a></li><li data-path="no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/concat-a-list-of-videos-with-background-audio">Concat a List of Videos with Background Audio</a></li><li class="has-children" data-path="no-code-integrations/makecom/json2video-modules/toolbox"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox">Toolbox<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/add-voiceover-to-video-or-image">Add Voiceover to Video or Image</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/merge-audio-and-video">Merge Audio and Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/trim-a-video">Trim a Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/quote-video"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/quote-video">Quote Video</a></li><li data-path="no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/json2video-modules/toolbox/social-media-reel">Social Media Reel</a></li></ul></ul></li></ul></ul></li><li data-path="no-code-integrations/makecom/common-issues"><a href="https://json2video.com/docs/v2/no-code-integrations/makecom/common-issues">Common issues</a></li></ul></ul></li><li data-path="no-code-integrations/n8n"><a href="https://json2video.com/docs/v2/no-code-integrations/n8n">N8N</a></li></ul></ul></li><li data-path="sdks"><a href="https://json2video.com/docs/v2/sdks">SDKs</a></li><li class="has-children" data-path="pricing"><a href="https://json2video.com/docs/v2/pricing">Pricing<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="pricing/credit-consumption"><a href="https://json2video.com/docs/v2/pricing/credit-consumption">Credit consumption</a></li><li data-path="pricing/plans"><a href="https://json2video.com/docs/v2/pricing/plans">Plans</a></li><li data-path="pricing/faq"><a href="https://json2video.com/docs/v2/pricing/faq">FAQ</a></li></ul></ul></li><li class="has-children" data-path="troubleshooting"><a href="https://json2video.com/docs/v2/troubleshooting">Troubleshooting<span class="toggle-icon"><i class="fas fa-chevron-right"></i></span></a><ul class="children"><ul><li data-path="troubleshooting/authentication"><a href="https://json2video.com/docs/v2/troubleshooting/authentication">Authentication</a></li><li data-path="troubleshooting/ai-asset-generation"><a href="https://json2video.com/docs/v2/troubleshooting/ai-asset-generation">AI asset generation</a></li></ul></ul></li></ul>                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main panel">
+            <div class="main-inner">
+            <div class="markdown-content">
+                    <h1>Subtitles element<a id="subtitles-element" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#subtitles-element" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h1>
+<p><strong>Type:</strong> object</p>
+<p>Defines a subtitles element, allowing you to add subtitles to the video. Subtitles can be automatically generated by transcribing the audio or provided via a URL to a subtitle file (SRT, VTT or ASS). You can customize the appearance of the subtitles using the <code>settings</code> property, including style, font, colors, position and more.</p>
+<h2>Working with the Subtitles element<a id="working-with-the-subtitles-element" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#working-with-the-subtitles-element" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<h3>Special considerations<a id="special-considerations" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#special-considerations" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>The subtitles element works a bit differently than other elements:</p>
+<ul>
+<li>It can only be used in the Movie <code>elements</code> array, meaning that you cannot enable or disable it on a per-scene basis.</li>
+<li>You can't have multiple subtitles elements in a single movie</li>
+<li>It's always processed at the end of the rendering process once the movie is complete</li>
+<li>The automatic transcription "listens" to the audio track of the movie and transcribes it into text. If the voice is not clear, the transcription may not be accurate.</li>
+</ul>
+<h3>Providing your own captions<a id="providing-your-own-captions" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#providing-your-own-captions" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>If you provide the captions in the <code>captions</code> property, the voiceover will not be transcribed and the captions will be displayed instead.
+The supported formats for the <code>captions</code> property are: SRT, VTT and ASS.</p>
+<p>The word highlighting option is not available when providing your own captions unless your provide the captions in ASS format and the captions include the timing for each word.</p>
+<h3>Manual review of the transcription<a id="manual-review-of-the-transcription" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#manual-review-of-the-transcription" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>In some cases, you may want to manually review the transcription before finally publishing the movie.</p>
+<p>To manually review the transcription:</p>
+<ol>
+<li>Render the movie with the automatic transcription enabled.</li>
+<li>Download the transcription file in ASS format. You will find a URL to file in the <code>GET /v2/movies</code> response object (<code>ass</code> property) along with the URL to the rendered movie.</li>
+<li>Open the ASS file with a text editor and review the transcription.</li>
+<li>Upload the edited ASS file to public server and get a URL to the file.</li>
+<li>Render the movie again, this time providing the URL to the edited ASS file in the <code>captions</code> property.</li>
+</ol>
+<h2>Properties<a id="properties" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#properties" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<p>The following properties are required:</p>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3>captions<a id="captions" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#captions" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>Specifies the captions to be used as subtitles. This can be either a URL pointing to a subtitle file, or the actual subtitle content directly embedded as a string. Supported subtitle formats for URLs or inline subtitles are: SRT, VTT, and ASS. If this property is omitted, the subtitles will be automatically generated from the audio track of the video.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h3>comment<a id="comment" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#comment" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>A field for adding descriptive notes or internal memos related to the subtitles element. This comment is for your reference and does not affect the rendering process.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h3>language<a id="language" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#language" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>The language of the audio to be transcribed. Specify a supported language code (e.g., <code>en</code> for English, <code>es</code> for Spanish) to improve transcription accuracy. Use <code>auto</code> to enable automatic language detection by the API.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Default Value</strong></td>
+<td><code>"auto"</code></td>
+</tr>
+<tr>
+<td><strong>Enum Values</strong></td>
+<td><code>auto</code>, <code>en</code>, <code>bg</code>, <code>ca</code>, <code>cs</code>, <code>da</code>, <code>nl</code>, <code>en-AU</code>, <code>en-GB</code>, <code>en-NZ</code>, <code>en-IN</code>, <code>en-US</code>, <code>et</code>, <code>fr</code>, <code>fi</code>, <code>nl-BE</code>, <code>de</code>, <code>de-CH</code>, <code>el</code>, <code>hi</code>, <code>hi-Latn</code>, <code>hu</code>, <code>id</code>, <code>it</code>, <code>ja</code>, <code>ko</code>, <code>lv</code>, <code>lt</code>, <code>ms</code>, <code>no</code>, <code>pl</code>, <code>pt</code>, <code>pt-BR</code>, <code>ro</code>, <code>ru</code>, <code>sk</code>, <code>es</code>, <code>es-419</code>, <code>sv</code>, <code>th</code>, <code>tr</code>, <code>uk</code>, <code>vi</code>, <code>zh</code>, <code>zh-TW</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3>model<a id="model" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#model" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>Specifies the transcription model to use when automatically generating subtitles from the audio. If a model is not specified, a default model will be used. Different models may offer varying levels of accuracy or support different languages.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Default Value</strong></td>
+<td><code>"default"</code></td>
+</tr>
+<tr>
+<td><strong>Enum Values</strong></td>
+<td><code>default</code>, <code>whisper</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3>settings<a id="settings" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#settings" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>Settings to customize the appearance of the subtitles, including style, font, colors, positioning, and other visual attributes. These settings allow you to tailor the subtitles to match your video's aesthetics and improve readability. Available settings depend on the chosen <code>style</code>.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>object</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Default Value</strong></td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>This object contains the following properties:</p>
+<ul>
+<li>
+<p><strong>all-caps</strong>: (boolean, optional) - Makes the subtitles uppercase.</p>
+<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><strong>box-color</strong>: (string, optional) - Color of the box behind the subtitles. Depending on the style, it can be the background color of the spoken word or the full line.</p>
+<ul>
+<li>Default: <code>"#000000"</code></li>
+</ul>
+</li>
+<li>
+<p><strong>font-family</strong>: (string, optional) - Font family of the subtitles. You can choose any Google Font name, one of the font families below or a custom font if &lt;code&gt;font-url&lt;/code&gt; is provided (see below).</p>
+<ul>
+<li>Default: <code>"Arial"</code></li>
+<li>Additional fonts: <code>Arial</code>, <code>Arial Bold</code>, <code>Oswald Bold</code>, <code>NotoSans Bold</code>, <code>Simplified Chinese</code>, <code>Traditional Chinese</code>, <code>Japanese</code>, <code>Korean</code>, <code>Korean Bold</code></li>
+</ul>
+</li>
+<li>
+<p><strong>font-size</strong>: (integer, optional) - Font size of the subtitles. Usual sizes are between 90 and 150. Defaults to 5% of the movie width.</p>
+</li>
+<li>
+<p><strong>font-url</strong>: (string, optional) - URL to the font file to use for the subtitles. The font file must be in TTF format. The &lt;code&gt;font-family&lt;/code&gt; property must match the font family name in the font file.</p>
+</li>
+<li>
+<p><strong>font-weight</strong>: (string, optional) - Font weight in the format of "100", "200", "300" to "900". The font weight is only available for Google Fonts, and must be a valid font family / weight pair. If the weight for the font family is not available, the "400" weight is used.</p>
+</li>
+<li>
+<p><strong>keywords</strong>: (array, optional) - Keywords provides additional vocabulary to the transcription process. Use it to improve the accuracy of the transcription of non-standard words or phrases. This options is only available for the <code>default</code> model.</p>
+</li>
+<li>
+<p><strong>line-color</strong>: (string, optional) - Color of the rest of words in the sentence.</p>
+<ul>
+<li>Default: <code>"#FFFFFF"</code></li>
+</ul>
+</li>
+<li>
+<p><strong>max-words-per-line</strong>: (integer, optional) - Maximum number of words per line. Setting this to <code>1</code> will show one word at a time.</p>
+<ul>
+<li>Default: <code>4</code></li>
+</ul>
+</li>
+<li>
+<p><strong>outline-color</strong>: (string, optional) - Outline color of the subtitles.</p>
+<ul>
+<li>Default: <code>"#000000"</code></li>
+</ul>
+</li>
+<li>
+<p><strong>outline-width</strong>: (integer, optional) - Width of the outline.</p>
+<ul>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+<li>
+<p><strong>position</strong>: (string, optional) - Position of the subtitles relative to the movie canvas.</p>
+<ul>
+<li>Default: <code>"bottom-center"</code></li>
+<li>Allowed values: <code>top-left</code>, <code>top-center</code>, <code>top-right</code>, <code>center-left</code>, <code>center-center</code>, <code>center-right</code>, <code>bottom-left</code>, <code>bottom-center</code>, <code>bottom-right</code>, <code>mid-bottom-center</code>, <code>mid-top-center</code>, <code>custom</code></li>
+</ul>
+</li>
+<li>
+<p><strong>replace</strong>: (object, optional) - Replaces words with the specified replacement. Useful to correct the transcription of non-standard words or phrases. The object is a key-value pair where the key is the word to replace and the value is the replacement.</p>
+</li>
+<li>
+<p><strong>shadow-color</strong>: (string, optional) - Shadow color of the subtitles.</p>
+<ul>
+<li>Default: <code>"#000000"</code></li>
+</ul>
+</li>
+<li>
+<p><strong>shadow-offset</strong>: (integer, optional) - Offset of the shadow.</p>
+<ul>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+<li>
+<p><strong>style</strong>: (string, optional) - Style of the subtitles. Classic styles show simple text overlays, while boxed styles show a box behind the subtitles. Check the examples for more details.</p>
+<ul>
+<li>Default: <code>"classic"</code></li>
+<li>Allowed values: <code>classic</code>, <code>classic-progressive</code>, <code>classic-one-word</code>, <code>boxed-line</code>, <code>boxed-word</code></li>
+</ul>
+</li>
+<li>
+<p><strong>word-color</strong>: (string, optional) - Color of word that is being spoken at the moment.</p>
+<ul>
+<li>Default: <code>"#FFFF00"</code></li>
+</ul>
+</li>
+<li>
+<p><strong>x</strong>: (integer, optional) - X coordinate of the subtitles relative to the movie canvas. This property is only used when the <code>position</code> property is set to <code>custom</code>.</p>
+<ul>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+<li>
+<p><strong>y</strong>: (integer, optional) - Y coordinate of the subtitles relative to the movie canvas. This property is only used when the <code>position</code> property is set to <code>custom</code>.</p>
+<ul>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+</ul>
+<h3>type<a id="type" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#type" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>This field specifies the element's type and must be set to <code>subtitles</code> for subtitles elements.</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Required</strong></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Enum Values</strong></td>
+<td><code>subtitles</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2>Examples<a id="examples" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#examples" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h2>
+<h3>Example 1: Adding subtitles<a id="example-1-adding-subtitles" href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#example-1-adding-subtitles" class="header-anchor" aria-hidden="true" title="Permalink">#</a></h3>
+<p>This example demonstrates a movie with a AI voiceover with automatic subtitles
+using a Google Font (Roboto 900).</p>
+<div class="code-block-wrapper"><pre><code class="json hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"width"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"1080"</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"height"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"1920"</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"scenes"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">"elements"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">"voice"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"en-US-AmandaMultilingualNeural"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"extra-time"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"azure"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"The five boxing wizards jump quickly across the hazy lawn."</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"voice"</span>
+                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span>
+					<span class="hljs-attr">"type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"subtitles"</span><span class="hljs-punctuation">,</span>
+					<span class="hljs-attr">"language"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"auto"</span><span class="hljs-punctuation">,</span>
+					<span class="hljs-attr">"model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"default"</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">"settings"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                        <span class="hljs-attr">"max-words-per-line"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"font-size"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"80"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"all-caps"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"outline-color"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"#FFFFFF"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"outline-width"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">8</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"word-color"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"#D22A1F"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"x"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">540</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"y"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1470</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"font-family"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Roboto"</span><span class="hljs-punctuation">,</span>
+						            <span class="hljs-attr">"font-weight"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"900"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"style"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"classic"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"position"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"custom"</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">"line-color"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"#D22A1F"</span>
+                    <span class="hljs-punctuation">}</span>
+                <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre><button class="copy-button" data-index="0">Copy</button></div>
+<div class="page-navigation"><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/voice" class="prev-page">← Previous: Voice</a><a href="https://json2video.com/docs/v2/api-reference/mastering" class="next-page">Next: Mastering →</a></div>                </div>
+            </div>
+        </main>
+        
+        <!-- Table of Contents (Right Panel) -->
+                <aside class="toc-sidebar panel">
+            <div class="toc-sidebar-inner">
+                <div class="table-of-contents">
+<h3>On This Page</h3>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#working-with-the-subtitles-element">Working with the Subtitles element</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#special-considerations">Special considerations</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#providing-your-own-captions">Providing your own captions</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#manual-review-of-the-transcription">Manual review of the transcription</a></li>
+</ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#properties">Properties</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#captions">captions</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#comment">comment</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#language">language</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#model">model</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#settings">settings</a></li>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#type">type</a></li>
+</ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#examples">Examples</a></li>
+<ul>
+<li><a href="https://json2video.com/docs/v2/api-reference/json-syntax/element/subtitles#example-1-adding-subtitles">Example 1: Adding subtitles</a></li>
+</ul>
+</ul>
+</div>            </div>
+        </aside>
+            </div>
+    
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/highlight.min.js"></script>
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/javascript.min.js"></script>
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/json.min.js"></script>
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/bash.min.js"></script>
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/php.min.js"></script>
+    <script src="./Subtitles - JSON2VIDEO Documentation_files/app.js"></script>
+
+
+</body></html>

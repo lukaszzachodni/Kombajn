@@ -3,7 +3,7 @@ x-worker-base: &worker-base
     context: .
     dockerfile: Dockerfile
   volumes:
-    - ./backend:/app/backend
+    - .:/app
     - ./data/ssd:/data/ssd
     - ./data/usb:/data/usb
     - ./data/hdd:/data/hdd

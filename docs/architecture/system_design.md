@@ -28,9 +28,10 @@ Workers are "specialists" listening to specific queues:
 - **`q_gpu_local`**: Local AI inference (Vision, Transcription).
 - **`q_runpod` / `q_cloud`**: Reserved for external compute nodes.
 
-## 5. Technology Stack
-- **Backend**: Python 3.10+, FastAPI, Celery + Redis.
-- **Processing**: MoviePy (Video), Demucs (Audio), Moondream2 (Vision).
-- **Monitoring**: 
-    - **Flower**: Task lifecycle and worker health.
-    - **Redis Commander**: Real-time queue depth and raw data inspection.
+## 6. J2V Local Engine (Local Foundry)
+In addition to the Atomic Tasks, the system includes a dedicated **JSON2Video Local Clone** engine:
+- **Compatibility**: Directly renders standard J2V manifests without cloud APIs.
+- **Architectural Excellence**: Fully OOP and SOLID compliant. Uses a **Factory Pattern** to resolve element processors.
+- **Robustness**: Implements a custom frame-by-frame compositor to bypass legacy MoviePy stability issues.
+- **Dynamic Logic**: Supports native J2V expressions (`{{var}}`), conditions, and data-driven iterations (`iterate`).
+
