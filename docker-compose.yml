@@ -10,7 +10,7 @@ x-worker-base: &worker-base
   environment:
     - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
     - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
-    - KOMBAJN_DRY_RUN=true
+    - KOMBAJN_DRY_RUN=false
     - PYTHONPATH=.
   depends_on:
     redis:

@@ -33,12 +33,13 @@ class TextElement(BaseModel):
     """Text element on a scene."""
     type: Literal["text"] = "text"
     text: str
-    font: str = "Arial"
+    font: str = "DejaVu-Sans"
     fontsize: int = 70
     color: str = "white"
     position: Union[str, Tuple[int, int], List[Union[str, int]]] = "center"
     start_time: float = 0.0
     end_time: Optional[float] = None
+    duration: Optional[float] = None
 
 
 class ColorBackground(BaseModel):
