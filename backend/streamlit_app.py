@@ -1,15 +1,14 @@
 import os
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import requests
 import streamlit as st
 from pydantic import ValidationError
 
 from backend.app.schemas import DatetimeToTimestampRequest, VideoEditManifest
-from backend.app.engine.j2v_types import J2VMovie, J2VScene
+from backend.app.engine.j2v_types import J2VMovie, J2VScene, ImageElement, TextElement
 from backend.app.engine.j2v_models import ELEMENT_MODEL_MAP
-from backend.app.engine.ui_builder import pydantic_form
 from backend.app.engine.project_store import ProjectStore
 
 
@@ -20,13 +19,8 @@ store = ProjectStore(STORE_PATH)
 
 def _post_api(endpoint: str, payload: Any) -> Dict[str, Any]:
     """Common helper to push data to the API."""
-    json_data = payload.model_dump() if hasattr(payload, "model_dump") else payload
-    
-    resp = requests.post(
-        f"{API_BASE}{endpoint}",
-        json=json_data,
-        timeout=10,
-    )
+    json_data = payload.model_dump(by_alias=True) if hasattr(payload, "model_dump") else payload
+    resp = requests.post(f"{API_BASE}{endpoint}", json=json_data, timeout=10)
     resp.raise_for_status()
     return resp.json()
 
@@ -37,168 +31,145 @@ def _get_task(task_id: str) -> Dict[str, Any]:
     return resp.json()
 
 
-def main() -> None:
-    st.set_page_config(
-        page_title="KOMBAJN · Control Panel",
-        page_icon="⚙️",
-        layout="wide",
-    )
+def get_default_manifest():
+    """Returns the requested 10s two-scene starter."""
+    return {
+        "width": 1080,
+        "height": 1920,
+        "fps": 24,
+        "scenes": [
+            {
+                "background-color": "#FF5733",
+                "duration": 5.0,
+                "comment": "Scene 1 starter",
+                "elements": [
+                    {"type": "text", "text": "SCENE 1", "style": "001", "settings": {"font-size": 100, "font-color": "white", "vertical-position": "center"}}
+                ]
+            },
+            {
+                "background-color": "#33FF57",
+                "duration": 5.0,
+                "comment": "Scene 2 starter",
+                "elements": [
+                    {"type": "text", "text": "SCENE 2", "style": "001", "settings": {"font-size": 100, "font-color": "white", "vertical-position": "center"}}
+                ]
+            }
+        ]
+    }
 
-    st.title("KOMBAJN AI · Control Panel")
+
+def main() -> None:
+    st.set_page_config(page_title="KOMBAJN AI", page_icon="⚙️", layout="wide")
+    st.title("KOMBAJN AI · Video Studio")
     
-    tab1, tab2, tab3 = st.tabs(["📺 Video Orchestration", "🎬 J2V Local Clone", "🗓️ Datetime Scenario"])
+    tab1, tab2 = st.tabs(["🎬 J2V Local Clone (Composer)", "🗓️ Tasks & Others"])
+
+    if "current_manifest" not in st.session_state:
+        st.session_state["current_manifest"] = get_default_manifest()
 
     with tab1:
-        st.subheader("Video Generator (JSON Manifest)")
-        st.caption("Unified Pydantic v2 validation (Single Source of Truth).")
-        
-        # Example manifest for startup
-        example = VideoEditManifest(
-            project_id="atomic_tracer_bullet",
-            width=1080,
-            height=1920,
-            fps=24,
-            scenes=[
-                {
-                    "background": {"type": "color", "color": "black", "duration": 3.0},
-                    "elements": [
-                        {"type": "text", "text": "SCENE ONE", "fontsize": 120, "color": "#6897bb", "position": "center", "start_time": 0.0},
-                        {"type": "text", "text": "Black Background", "fontsize": 60, "color": "white", "position": ["center", 1100], "start_time": 1.0}
-                    ]
-                },
-                {
-                    "background": {"type": "color", "color": "#3c3f41", "duration": 4.0},
-                    "elements": [
-                        {"type": "text", "text": "SCENE TWO", "fontsize": 120, "color": "#6a8759", "position": "center", "start_time": 0.0},
-                        {"type": "text", "text": "Gray Background", "fontsize": 60, "color": "white", "position": ["center", 1100], "start_time": 1.0}
-                    ]
-                }
-            ]
-        )
+        # --- Project Header ---
+        with st.container(border=True):
+            c1, c2, c3, c4 = st.columns([2, 2, 1, 1])
+            projects = store.list_projects()
+            sel = c1.selectbox("📁 Load Project", ["-- New Project --"] + projects)
+            if sel != "-- New Project --" and st.session_state.get("last_loaded") != sel:
+                st.session_state["current_manifest"] = store.load_project(sel)
+                st.session_state["last_loaded"] = sel
+                st.rerun()
+            elif sel == "-- New Project --" and st.session_state.get("last_loaded") is not None:
+                st.session_state["current_manifest"] = get_default_manifest()
+                st.session_state["last_loaded"] = None
+                st.rerun()
+            
+            proj_name = c2.text_input("📝 Save Name", value=st.session_state.get("last_loaded") or "my_video")
+            if c3.button("💾 Save"):
+                store.save_project(proj_name, st.session_state["current_manifest"])
+                st.toast(f"Saved {proj_name}")
+            if c4.button("🧹 Reset"):
+                st.session_state["current_manifest"] = get_default_manifest()
+                st.rerun()
 
-        manifest_input = st.text_area(
-            "Enter Manifest (JSON)", 
-            value=json.dumps(example.model_dump(), indent=2),
-            height=400
-        )
+        # --- Layout: Editor | Preview ---
+        col_ed, col_pre = st.columns([3, 2])
 
-        if st.button("Submit Render Task"):
+        with col_ed:
+            st.subheader("🛠️ Video Settings")
+            m = st.session_state["current_manifest"]
+            cc1, cc2, cc3 = st.columns(3)
+            m["width"] = cc1.number_input("Width", value=m.get("width", 1080))
+            m["height"] = cc2.number_input("Height", value=m.get("height", 1920))
+            m["fps"] = cc3.number_input("FPS", value=m.get("fps", 24))
+
+            st.markdown("---")
+            st.subheader("🎬 Scenes")
+            
+            for i, scene in enumerate(m.get("scenes", [])):
+                with st.expander(f"Scene #{i+1} ({scene.get('duration')}s)", expanded=True):
+                    sc1, sc2, sc3 = st.columns([2, 1, 1])
+                    scene["background-color"] = sc1.color_picker("BG Color", value=scene.get("background-color", "#000000"), key=f"bg_{i}")
+                    scene["duration"] = sc2.number_input("Duration (s)", value=float(scene.get("duration", 5.0)), key=f"dur_{i}")
+                    if sc3.button("🗑️ Delete Scene", key=f"del_sc_{i}"):
+                        m["scenes"].pop(i)
+                        st.rerun()
+                    
+                    st.write("**Elements**")
+                    for j, el in enumerate(scene.get("elements", [])):
+                        with st.container(border=True):
+                            ec1, ec2, ec3 = st.columns([1, 3, 1])
+                            ec1.caption(f"{el.get('type').upper()}")
+                            
+                            if el["type"] == "text":
+                                el["text"] = ec2.text_input("Text", value=el.get("text", ""), key=f"txt_{i}_{j}")
+                            elif el["type"] == "image":
+                                el["src"] = ec2.text_input("Image URL / Path", value=el.get("src", ""), key=f"img_{i}_{j}")
+                            
+                            if ec3.button("🗑️", key=f"del_el_{i}_{j}"):
+                                scene["elements"].pop(j)
+                                st.rerun()
+                    
+                    # Add Element Buttons
+                    btn_c1, btn_c2 = st.columns(2)
+                    if btn_c1.button("➕ Add Text", key=f"add_txt_{i}"):
+                        scene["elements"].append({"type": "text", "text": "New Text", "style": "001", "settings": {"font-size": 80, "font-color": "white"}})
+                        st.rerun()
+                    if btn_c2.button("➕ Add Image", key=f"add_img_{i}"):
+                        scene["elements"].append({"type": "image", "src": "/data/assets/images/placeholder.png", "position": "center-center"})
+                        st.rerun()
+
+            if st.button("🚀 Add New Scene"):
+                m["scenes"].append({"background-color": "#000000", "duration": 5.0, "elements": []})
+                st.rerun()
+
+        with col_pre:
+            st.subheader("👁️ JSON Preview & Render")
             try:
-                # 1. Pydantic v2 Validation (checks types, fields, etc. against schemas.py)
-                manifest_obj = VideoEditManifest(**json.loads(manifest_input))
+                # Validation
+                valid_obj = J2VMovie(**m)
+                final_json = valid_obj.model_dump(by_alias=True)
+                st.success("✅ Manifest is valid")
                 
-                # 2. Push to API
-                data = _post_api("/tasks/generate-video", manifest_obj)
-                st.success(f"Task submitted! Task ID: {data.get('task_id')}")
-                st.session_state["last_task_id"] = data.get("task_id")
+                if st.button("🔥 RENDER VIDEO", use_container_width=True, type="primary"):
+                    res = _post_api("/tasks/j2v-render", valid_obj)
+                    st.balloons()
+                    st.session_state["last_task_id"] = res.get("task_id")
+                    st.success(f"Rendering started! Task ID: {res.get('task_id')}")
             except ValidationError as e:
-                st.error(f"Model Validation Error: {e.json()}")
-            except Exception as exc:
-                st.error(f"Error: {exc}")
+                st.error(f"❌ Invalid Data: {e.error_count()} errors")
+                final_json = m
+            
+            st.code(json.dumps(final_json, indent=2), language="json")
 
     with tab2:
-        st.subheader("J2V Local Clone - Project Manager")
-        
-        # 1. Project Management
-        col_list, col_new = st.columns([3, 1])
-        
-        with col_list:
-            projects = store.list_projects()
-            selected_proj = st.selectbox("📁 Load Existing Project", ["-- New Project --"] + projects)
-        
-        with col_new:
-            new_proj_name = st.text_input("📝 Save as New Name", placeholder="my_cool_video")
-
-        # Handle loading logic
-        if "current_manifest" not in st.session_state:
-            st.session_state["current_manifest"] = {}
-            st.session_state["last_loaded"] = None
-
-        if selected_proj != "-- New Project --" and st.session_state.get("last_loaded") != selected_proj:
-            st.session_state["current_manifest"] = store.load_project(selected_proj)
-            st.session_state["last_loaded"] = selected_proj
-            st.rerun()
-        elif selected_proj == "-- New Project --" and st.session_state.get("last_loaded") is not None:
-            st.session_state["current_manifest"] = {}
-            st.session_state["last_loaded"] = None
-            st.rerun()
-
-        st.markdown("---")
-        st.subheader("Configuration")
-        
-        with st.expander("Movie Settings", expanded=True):
-            movie_data = pydantic_form(
-                J2VMovie, 
-                key_prefix="j2v_movie", 
-                registry=ELEMENT_MODEL_MAP,
-                initial_data=st.session_state["current_manifest"]
-            )
-            
-        st.write("### Generated Manifest Preview")
-        st.code(json.dumps(movie_data, indent=2))
-        
-        col_s1, col_s2, col_s3 = st.columns(3)
-        with col_s1:
-            save_name = new_proj_name if new_proj_name else (selected_proj if selected_proj != "-- New Project --" else None)
-            if st.button("💾 Save Project") and save_name:
-                store.save_project(save_name, movie_data)
-                st.success(f"Project '{save_name}' saved!")
-                st.session_state["last_loaded"] = save_name
-                st.rerun()
-        
-        with col_s2:
-            if st.button("📥 Download Manifest"):
-                st.download_button(
-                    label="Confirm Download",
-                    data=json.dumps(movie_data, indent=2),
-                    file_name="j2v_manifest.json",
-                    mime="application/json"
-                )
-        with col_s3:
-            if st.button("🚀 Submit to Local J2V Renderer"):
-                try:
-                    # Validate first
-                    manifest_obj = J2VMovie(**movie_data)
-                    # Submit to API
-                    data = _post_api("/tasks/j2v-render", manifest_obj)
-                    st.success(f"J2V Render Task submitted! Task ID: {data.get('task_id')}")
-                    st.session_state["last_task_id"] = data.get("task_id")
-                except ValidationError as e:
-                    st.error(f"Validation Error: {e.json()}")
-                except Exception as exc:
-                    st.error(f"Error: {exc}")
-
-    with tab3:
-        st.subheader("Datetime → timestamp")
-        
-        with st.form("date_form"):
-            iso_input = st.text_input("Datetime (ISO 8601)", value="2026-03-05T12:00:00Z")
-            submitted = st.form_submit_button("Submit")
-            
-        if submitted:
+        st.subheader("Task History")
+        last_id = st.session_state.get("last_task_id", "")
+        task_id_input = st.text_input("Enter Task ID to check", value=last_id)
+        if st.button("Check Status"):
             try:
-                payload = DatetimeToTimestampRequest(datetime_iso=iso_input)
-                data = _post_api("/tasks/datetime-to-timestamp", payload)
-                st.success("Task submitted.")
-                st.session_state["last_task_id"] = data.get("task_id")
-            except ValidationError as e:
-                st.error(f"Validation Error: {e}")
-            except Exception as exc:
-                st.error(f"Error during submission: {exc}")
-
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🔍 Last Task Status")
-
-    last_id = st.session_state.get("last_task_id", "")
-    task_id_input = st.sidebar.text_input("Task ID", value=last_id)
-
-    if st.sidebar.button("Refresh Status") and task_id_input:
-        try:
-            status = _get_task(task_id_input)
-            st.sidebar.json(status)
-        except Exception as exc:
-            st.sidebar.error(f"Error: {exc}")
-
+                status = _get_task(task_id_input)
+                st.json(status)
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 if __name__ == "__main__":
     main()

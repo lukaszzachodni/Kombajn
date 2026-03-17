@@ -2,14 +2,16 @@ from typing import Any, Dict, Tuple, Optional, List, Union
 from moviepy.editor import ImageClip, TextClip, AudioFileClip, VideoFileClip, ColorClip, afx, vfx
 from moviepy.Clip import Clip
 from .j2v_base_processor import J2VBaseProcessor
-from .j2v_models import ImageElement, TextElement, AudioElement, VideoElement, VoiceElement, AudiogramElement, SubtitlesElement
+from .j2v_types import (
+    ImageElement, TextElement, AudioElement, VideoElement, 
+    VoiceElement, AudiogramElement, SubtitlesElement, ComponentElement
+)
 from .base import ClipProcessor
 
 # --- OLD ENGINE PROCESSORS (For backward compatibility) ---
 
 class ColorProcessor(ClipProcessor):
     def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
-        # context is ColorBackground schema
         duration = context.duration if context.duration > 0 else 5.0
         color = context.color
         if isinstance(color, str) and color.startswith("#"):
@@ -18,16 +20,13 @@ class ColorProcessor(ClipProcessor):
 
 class ImageProcessor(ClipProcessor):
     def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
-        # context is ImageBackground or ImageElement schema
         path = getattr(context, "path", getattr(context, "src", None))
         duration = getattr(context, "duration", bg_duration)
         clip = ImageClip(path).set_duration(duration)
-        # Simple resize to fit
         return clip.resize(width=width) if (width/height < clip.w/clip.h) else clip.resize(height=height)
 
 class TextProcessor(ClipProcessor):
     def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
-        # context is TextElement schema
         duration = getattr(context, "duration", None) or (bg_duration - getattr(context, "start_time", 0.0))
         clip = TextClip(
             context.text,
@@ -36,7 +35,6 @@ class TextProcessor(ClipProcessor):
             font=getattr(context, "font", "DejaVu-Sans"),
             method="label"
         ).set_duration(duration).set_start(getattr(context, "start_time", 0.0))
-        
         pos = getattr(context, "position", "center")
         return clip.set_position(pos)
 
@@ -83,18 +81,13 @@ class J2VAudioProcessor(J2VProcessor):
         el = AudioElement(**element_data)
         audio = AudioFileClip(el.src)
         if el.seek > 0: audio = audio.subclip(el.seek)
-        
-        # Hard Fix: Ensure audio clip never exceeds its intrinsic length to avoid OSError
         safe_duration = el.duration if el.duration > 0 else (container_duration if el.duration == -2 else audio.duration)
         if el.loop == -1 or el.loop > 1:
             audio = audio.fx(afx.audio_loop, duration=safe_duration)
         else:
-            # Cap at actual length if not looping
             audio = audio.subclip(0, min(audio.duration, safe_duration))
-            
         if el.muted: audio = audio.volumex(0)
         else: audio = audio.volumex(el.volume)
-        
         return J2VBaseProcessor.apply_common_properties(audio, el, container_duration)
 
 class J2VVideoProcessor(J2VProcessor):
@@ -127,10 +120,7 @@ class J2VVoiceProcessor(J2VProcessor):
         lang = el.voice.split("-")[0] if el.voice and "-" in el.voice else "en"
         gTTS(text=el.text, lang=lang).save(str(temp_path))
         audio = AudioFileClip(str(temp_path))
-        
-        # Hard Fix: Subclip to actual duration to prevent OSError in mixing
         audio = audio.subclip(0, audio.duration)
-        
         if el.muted: audio = audio.volumex(0)
         else: audio = audio.volumex(el.volume)
         return J2VBaseProcessor.apply_common_properties(audio, el, container_duration)
@@ -145,4 +135,10 @@ class J2VSubtitlesProcessor(J2VProcessor):
     def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
         el = SubtitlesElement(**element_data)
         txt = TextClip("Local Subtitles Placeholder", fontsize=40, color='yellow').set_position(("center", "bottom"))
+        return J2VBaseProcessor.apply_common_properties(txt, el, container_duration)
+
+class J2VComponentProcessor(J2VProcessor):
+    def process(self, width: int, height: int, element_data: Dict[str, Any], container_duration: float) -> Clip:
+        el = ComponentElement(**element_data)
+        txt = TextClip(f"Component: {el.component}", fontsize=50, color='white', bg_color='blue').set_position("center")
         return J2VBaseProcessor.apply_common_properties(txt, el, container_duration)

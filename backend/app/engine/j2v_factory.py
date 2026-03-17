@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from .processors import J2VImageProcessor, J2VTextProcessor, J2VAudioProcessor, J2VVideoProcessor, J2VVoiceProcessor, J2VAudiogramProcessor, J2VSubtitlesProcessor
+from .processors import J2VImageProcessor, J2VTextProcessor, J2VAudioProcessor, J2VVideoProcessor, J2VVoiceProcessor, J2VAudiogramProcessor, J2VSubtitlesProcessor, J2VComponentProcessor
 
 class J2VProcessorFactory:
     """
@@ -12,7 +12,8 @@ class J2VProcessorFactory:
         "video": J2VVideoProcessor,
         "voice": J2VVoiceProcessor,
         "audiogram": J2VAudiogramProcessor,
-        "subtitles": J2VSubtitlesProcessor
+        "subtitles": J2VSubtitlesProcessor,
+        "component": J2VComponentProcessor
     }
 
     @classmethod
