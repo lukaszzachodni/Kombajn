@@ -1,8 +1,47 @@
-from typing import Any, Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional, List, Union
 from moviepy.editor import ImageClip, TextClip, AudioFileClip, VideoFileClip, ColorClip, afx, vfx
 from moviepy.Clip import Clip
 from .j2v_base_processor import J2VBaseProcessor
 from .j2v_models import ImageElement, TextElement, AudioElement, VideoElement, VoiceElement, AudiogramElement, SubtitlesElement
+from .base import ClipProcessor
+
+# --- OLD ENGINE PROCESSORS (For backward compatibility) ---
+
+class ColorProcessor(ClipProcessor):
+    def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
+        # context is ColorBackground schema
+        duration = context.duration if context.duration > 0 else 5.0
+        color = context.color
+        if isinstance(color, str) and color.startswith("#"):
+            color = tuple(int(color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+        return ColorClip(size=(width, height), color=color, duration=duration)
+
+class ImageProcessor(ClipProcessor):
+    def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
+        # context is ImageBackground or ImageElement schema
+        path = getattr(context, "path", getattr(context, "src", None))
+        duration = getattr(context, "duration", bg_duration)
+        clip = ImageClip(path).set_duration(duration)
+        # Simple resize to fit
+        return clip.resize(width=width) if (width/height < clip.w/clip.h) else clip.resize(height=height)
+
+class TextProcessor(ClipProcessor):
+    def create_clip(self, width: int, height: int, context: Any, bg_duration: float = 0.0) -> Clip:
+        # context is TextElement schema
+        duration = getattr(context, "duration", None) or (bg_duration - getattr(context, "start_time", 0.0))
+        clip = TextClip(
+            context.text,
+            fontsize=getattr(context, "fontsize", 70),
+            color=getattr(context, "color", "white"),
+            font=getattr(context, "font", "DejaVu-Sans"),
+            method="label"
+        ).set_duration(duration).set_start(getattr(context, "start_time", 0.0))
+        
+        pos = getattr(context, "position", "center")
+        return clip.set_position(pos)
+
+
+# --- J2V CLONE PROCESSORS ---
 
 class J2VProcessor:
     """Interface for J2V processors."""

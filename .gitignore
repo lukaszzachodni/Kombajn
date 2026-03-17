@@ -35,9 +35,13 @@ coverage.xml
 logs/
 
 # Data / models / assets (duże pliki)
-data/
+data/hdd/
+data/ssd/
+data/usb/
+# assets/ # Old root assets, now moved to data/assets
+data/assets/*.mp4 # Ignoruj duże filmy, zostaw małe
+data/assets/*.wav 
 models/
-assets/
 
 # Local config / secrets
 *.env.local

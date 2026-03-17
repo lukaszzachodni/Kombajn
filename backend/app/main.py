@@ -23,14 +23,18 @@ def health_full() -> dict:
     replies = celery_app.control.ping(timeout=1.0)
     return {"status": "ok", "workers": replies}
 
-@app.post("/tasks/generate-video")
-def create_video_task(manifest: VideoEditManifest) -> dict:
-    """Trigger the atomic-task-based orchestration for video rendering."""
+from .engine.j2v_types import J2VMovie
+
+@app.post("/tasks/j2v-render")
+def create_j2v_render_task(manifest: J2VMovie) -> dict:
+    """Trigger the J2V Local Clone rendering process."""
+    # We can either run it synchronously for small tests or use Celery.
+    # For now, let's use Celery to keep the API responsive.
     async_result = celery_app.send_task(
-        "kombajn.tasks.orchestrate_video_render",
-        kwargs={"manifest_dict": manifest.model_dump()},
+        "kombajn.tasks.j2v_render_movie",
+        kwargs={"manifest_dict": manifest.model_dump(by_alias=True)},
     )
-    return {"task_id": async_result.id, "project_id": manifest.project_id}
+    return {"task_id": async_result.id}
 
 @app.get("/tasks/{task_id}")
 def get_task_status(task_id: str) -> dict:

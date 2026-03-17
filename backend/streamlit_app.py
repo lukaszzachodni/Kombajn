@@ -7,9 +7,15 @@ import streamlit as st
 from pydantic import ValidationError
 
 from backend.app.schemas import DatetimeToTimestampRequest, VideoEditManifest
+from backend.app.engine.j2v_types import J2VMovie, J2VScene
+from backend.app.engine.j2v_models import ELEMENT_MODEL_MAP
+from backend.app.engine.ui_builder import pydantic_form
+from backend.app.engine.project_store import ProjectStore
 
 
 API_BASE = os.getenv("KOMBAJN_API_BASE", "http://api:8000")
+STORE_PATH = os.getenv("PROJECT_STORE_PATH", "/data/projects")
+store = ProjectStore(STORE_PATH)
 
 
 def _post_api(endpoint: str, payload: Any) -> Dict[str, Any]:
@@ -40,7 +46,7 @@ def main() -> None:
 
     st.title("KOMBAJN AI · Control Panel")
     
-    tab1, tab2 = st.tabs(["📺 Video Orchestration", "🗓️ Datetime Scenario"])
+    tab1, tab2, tab3 = st.tabs(["📺 Video Orchestration", "🎬 J2V Local Clone", "🗓️ Datetime Scenario"])
 
     with tab1:
         st.subheader("Video Generator (JSON Manifest)")
@@ -91,6 +97,78 @@ def main() -> None:
                 st.error(f"Error: {exc}")
 
     with tab2:
+        st.subheader("J2V Local Clone - Project Manager")
+        
+        # 1. Project Management
+        col_list, col_new = st.columns([3, 1])
+        
+        with col_list:
+            projects = store.list_projects()
+            selected_proj = st.selectbox("📁 Load Existing Project", ["-- New Project --"] + projects)
+        
+        with col_new:
+            new_proj_name = st.text_input("📝 Save as New Name", placeholder="my_cool_video")
+
+        # Handle loading logic
+        if "current_manifest" not in st.session_state:
+            st.session_state["current_manifest"] = {}
+            st.session_state["last_loaded"] = None
+
+        if selected_proj != "-- New Project --" and st.session_state.get("last_loaded") != selected_proj:
+            st.session_state["current_manifest"] = store.load_project(selected_proj)
+            st.session_state["last_loaded"] = selected_proj
+            st.rerun()
+        elif selected_proj == "-- New Project --" and st.session_state.get("last_loaded") is not None:
+            st.session_state["current_manifest"] = {}
+            st.session_state["last_loaded"] = None
+            st.rerun()
+
+        st.markdown("---")
+        st.subheader("Configuration")
+        
+        with st.expander("Movie Settings", expanded=True):
+            movie_data = pydantic_form(
+                J2VMovie, 
+                key_prefix="j2v_movie", 
+                registry=ELEMENT_MODEL_MAP,
+                initial_data=st.session_state["current_manifest"]
+            )
+            
+        st.write("### Generated Manifest Preview")
+        st.code(json.dumps(movie_data, indent=2))
+        
+        col_s1, col_s2, col_s3 = st.columns(3)
+        with col_s1:
+            save_name = new_proj_name if new_proj_name else (selected_proj if selected_proj != "-- New Project --" else None)
+            if st.button("💾 Save Project") and save_name:
+                store.save_project(save_name, movie_data)
+                st.success(f"Project '{save_name}' saved!")
+                st.session_state["last_loaded"] = save_name
+                st.rerun()
+        
+        with col_s2:
+            if st.button("📥 Download Manifest"):
+                st.download_button(
+                    label="Confirm Download",
+                    data=json.dumps(movie_data, indent=2),
+                    file_name="j2v_manifest.json",
+                    mime="application/json"
+                )
+        with col_s3:
+            if st.button("🚀 Submit to Local J2V Renderer"):
+                try:
+                    # Validate first
+                    manifest_obj = J2VMovie(**movie_data)
+                    # Submit to API
+                    data = _post_api("/tasks/j2v-render", manifest_obj)
+                    st.success(f"J2V Render Task submitted! Task ID: {data.get('task_id')}")
+                    st.session_state["last_task_id"] = data.get("task_id")
+                except ValidationError as e:
+                    st.error(f"Validation Error: {e.json()}")
+                except Exception as exc:
+                    st.error(f"Error: {exc}")
+
+    with tab3:
         st.subheader("Datetime → timestamp")
         
         with st.form("date_form"):

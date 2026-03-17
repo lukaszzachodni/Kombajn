@@ -140,3 +140,13 @@ ELEMENT_MODEL_MAP = {
     "audiogram": AudiogramElement,
     "subtitles": SubtitlesElement
 }
+
+J2VAnyElement = Union[
+    ImageElement, 
+    TextElement, 
+    AudioElement, 
+    VideoElement, 
+    VoiceElement, 
+    AudiogramElement, 
+    SubtitlesElement
+]
