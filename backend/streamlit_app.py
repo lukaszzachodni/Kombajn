@@ -6,16 +6,19 @@ import requests
 import streamlit as st
 from pydantic import ValidationError
 
-from backend.app.schemas import DatetimeToTimestampRequest, VideoEditManifest
 from backend.app.engine.j2v_types import J2VMovie, J2VScene, ImageElement, TextElement
 from backend.app.engine.j2v_models import ELEMENT_MODEL_MAP
 from backend.app.engine.ui_builder import pydantic_form
 from backend.app.engine.project_store import ProjectStore
+from backend.app.engine.asset_manager import AssetManager
 
 
 API_BASE = os.getenv("KOMBAJN_API_BASE", "http://api:8000")
 STORE_PATH = os.getenv("PROJECT_STORE_PATH", "/data/projects")
+ASSET_PATH = os.getenv("ASSET_PATH", "/data/assets")
+
 store = ProjectStore(STORE_PATH)
+asset_mgr = AssetManager(ASSET_PATH)
 
 
 def _post_api(endpoint: str, payload: Any) -> Dict[str, Any]:
@@ -41,11 +44,11 @@ def get_demo_manifest():
         "scenes": [
             {
                 "background-color": "#FF5733", "duration": 5.0,
-                "elements": [{"type": "text", "text": "SCENE 1", "settings": {"font-size": 100, "font-color": "white"}}]
+                "elements": [{"type": "text", "text": "SCENE 1", "style": "001", "settings": {"font-size": 100, "font-color": "white"}}]
             },
             {
                 "background-color": "#33FF57", "duration": 5.0,
-                "elements": [{"type": "text", "text": "SCENE 2", "settings": {"font-size": 100, "font-color": "white"}}]
+                "elements": [{"type": "text", "text": "SCENE 2", "style": "001", "settings": {"font-size": 100, "font-color": "white"}}]
             }
         ]
     }
@@ -53,7 +56,7 @@ def get_demo_manifest():
 
 def main() -> None:
     st.set_page_config(page_title="KOMBAJN AI Studio", page_icon="🎬", layout="wide")
-    st.title("🎬 KOMBAJN AI · Professional Video Studio")
+    st.title("🎬 J2V Professional Video Studio")
     
     tab1, tab2 = st.tabs(["🏗️ J2V Composer", "🔍 Monitoring"])
 
@@ -66,7 +69,7 @@ def main() -> None:
             c1, c2, c3, c4 = st.columns([3, 2, 1, 1])
             projects = store.list_projects()
             options = ["-- New Empty Project --", "🚀 LOAD DEMO"] + projects
-            sel = c1.selectbox("📁 Projects", options)
+            sel = c1.selectbox("📁 Projects Library", options)
             
             if sel == "🚀 LOAD DEMO" and st.session_state.get("last_loaded") != "demo":
                 st.session_state["current_manifest"] = get_demo_manifest()
@@ -78,13 +81,13 @@ def main() -> None:
                 st.session_state["current_manifest"] = store.load_project(sel)
                 st.session_state["last_loaded"] = sel; st.rerun()
             
-            proj_name = c2.text_input("Project Name", value=st.session_state.get("last_loaded") or "my_video")
+            proj_name = c2.text_input("Project Name", value="" if st.session_state.get("last_loaded") == "demo" else (st.session_state.get("last_loaded") or "my_video"))
             if c3.button("💾 SAVE", use_container_width=True):
                 store.save_project(proj_name, st.session_state["current_manifest"])
                 st.toast(f"Saved to {proj_name}.json")
             if c4.button("🗑️ CLEAR", use_container_width=True):
                 st.session_state["current_manifest"] = get_empty_manifest()
-                st.rerun()
+                st.session_state["last_loaded"] = None; st.rerun()
 
         # --- MAIN LAYOUT ---
         col_ed, col_pre = st.columns([3, 2])
@@ -93,15 +96,14 @@ def main() -> None:
         with col_ed:
             # 1. MOVIE GLOBAL SETTINGS
             with st.expander("🌍 GLOBAL MOVIE SETTINGS", expanded=False):
-                movie_data = pydantic_form(J2VMovie, key_prefix="movie_glob", initial_data=m, exclude_fields=["scenes", "elements"])
-                # Update root manifest with basic fields
+                movie_data = pydantic_form(J2VMovie, key_prefix="movie_glob", initial_data=m, exclude_fields=["scenes", "elements"], asset_mgr=asset_mgr)
                 for k, v in movie_data.items(): m[k] = v
 
             st.markdown("---")
             
             # 2. SCENES
             st.subheader("🎬 Scenes")
-            if not m.get("scenes"): st.info("Add a scene to start.")
+            if not m.get("scenes"): st.info("Add a scene to start building your video.")
             
             new_scenes = []
             for i, scene_data in enumerate(m.get("scenes", [])):
@@ -111,12 +113,12 @@ def main() -> None:
                     if sc_head2.button("❌ Remove", key=f"del_sc_{i}"):
                         m["scenes"].pop(i); st.rerun()
                     
-                    # Scene Base Properties (using pydantic_form for ALL fields)
-                    updated_scene = pydantic_form(J2VScene, key_prefix=f"sc_{i}", initial_data=scene_data, exclude_fields=["elements"])
+                    # Scene Base Properties
+                    updated_scene = pydantic_form(J2VScene, key_prefix=f"sc_{i}", initial_data=scene_data, exclude_fields=["elements"], asset_mgr=asset_mgr)
                     
                     # 3. ELEMENTS IN SCENE
                     st.write("---")
-                    st.write("**Elements in this scene**")
+                    st.write("**Elements**")
                     elements = scene_data.get("elements", [])
                     new_elements = []
                     
@@ -130,16 +132,13 @@ def main() -> None:
                             if el_c2.button("🗑️", key=f"del_el_{i}_{j}"):
                                 elements.pop(j); st.rerun()
                             
-                            # Render ALL fields for this specific element type
-                            updated_el = pydantic_form(el_model, key_prefix=f"el_{i}_{j}", initial_data=el_data)
+                            updated_el = pydantic_form(el_model, key_prefix=f"el_{i}_{j}", initial_data=el_data, asset_mgr=asset_mgr)
                             new_elements.append(updated_el)
                     
-                    # Add Element Logic
                     add_c1, add_c2 = st.columns([3, 1])
                     el_type_to_add = add_c1.selectbox("Add element", list(ELEMENT_MODEL_MAP.keys()), key=f"add_el_sel_{i}")
                     if add_c2.button("➕ ADD", key=f"add_el_btn_{i}", use_container_width=True):
                         if "elements" not in scene_data: scene_data["elements"] = []
-                        # Initialize with correct default type
                         scene_data["elements"].append({"type": el_type_to_add})
                         st.rerun()
                     
@@ -153,12 +152,11 @@ def main() -> None:
                 st.rerun()
 
         with col_pre:
-            st.subheader("👁️ Preview & Render")
+            st.subheader("👁️ JSON Preview & Render")
             try:
-                # Full Validation
                 valid_obj = J2VMovie(**m)
                 final_json = valid_obj.model_dump(by_alias=True)
-                st.success("✅ Manifest is 100% valid and documented.")
+                st.success("✅ Manifest is valid")
                 
                 if st.button("🔥 START RENDERING", use_container_width=True, type="primary"):
                     res = _post_api("/tasks/j2v-render", valid_obj)
