@@ -1,24 +1,24 @@
-from typing import Any, Dict
-from .processors import J2VImageProcessor, J2VTextProcessor, J2VAudioProcessor, J2VVideoProcessor, J2VVoiceProcessor, J2VAudiogramProcessor, J2VSubtitlesProcessor, J2VComponentProcessor
+from .processors.image import J2VImageProcessor
+from .processors.text import J2VTextProcessor
+from .processors.audio import J2VAudioProcessor
+from .processors.video import J2VVideoProcessor
+from .processors.voice import J2VVoiceProcessor
+from .processors.audiogram import J2VAudiogramProcessor
+from .processors.subtitles import J2VSubtitlesProcessor
+from .processors.component import J2VComponentProcessor
 
 class J2VProcessorFactory:
-    """
-    Registry for mapping J2V types to local processors.
-    """
     _processors = {
-        "image": J2VImageProcessor,
-        "text": J2VTextProcessor,
-        "audio": J2VAudioProcessor,
-        "video": J2VVideoProcessor,
-        "voice": J2VVoiceProcessor,
-        "audiogram": J2VAudiogramProcessor,
-        "subtitles": J2VSubtitlesProcessor,
-        "component": J2VComponentProcessor
+        "image": J2VImageProcessor(),
+        "text": J2VTextProcessor(),
+        "audio": J2VAudioProcessor(),
+        "video": J2VVideoProcessor(),
+        "voice": J2VVoiceProcessor(),
+        "audiogram": J2VAudiogramProcessor(),
+        "subtitles": J2VSubtitlesProcessor(),
+        "component": J2VComponentProcessor(),
     }
 
-    @classmethod
-    def get_processor(cls, type_name: str) -> Any:
-        proc_class = cls._processors.get(type_name)
-        if not proc_class:
-            raise ValueError(f"J2V Processor for '{type_name}' not implemented locally.")
-        return proc_class()
+    @staticmethod
+    def get_processor(type_name: str):
+        return J2VProcessorFactory._processors.get(type_name)
