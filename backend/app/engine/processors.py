@@ -65,7 +65,7 @@ class J2VTextProcessor(J2VProcessor):
         duration = el.duration if el.duration > 0 else container_duration
         txt_clip = TextClip(
             el.text,
-            fontsize=settings.get("font-size", 70),
+            fontsize=int(settings.get("font-size", 70)),
             color=settings.get("font-color", "white"),
             font="Arial",
             method="caption",

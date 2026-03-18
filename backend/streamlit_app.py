@@ -1,6 +1,7 @@
 import os
 import json
 from typing import Any, Dict, List
+from pathlib import Path
 
 import requests
 import streamlit as st
@@ -16,6 +17,7 @@ from backend.app.engine.asset_manager import AssetManager
 API_BASE = os.getenv("KOMBAJN_API_BASE", "http://api:8000")
 STORE_PATH = os.getenv("PROJECT_STORE_PATH", "/data/projects")
 ASSET_PATH = os.getenv("ASSET_PATH", "/data/assets")
+MANIFESTS_PATH = Path("backend/app/tests/manifests")
 
 store = ProjectStore(STORE_PATH)
 asset_mgr = AssetManager(ASSET_PATH)
@@ -37,22 +39,6 @@ def _get_task(task_id: str) -> Dict[str, Any]:
 def get_empty_manifest():
     return {"width": 1080, "height": 1920, "fps": 24, "scenes": [], "variables": {}}
 
-def get_demo_manifest():
-    return {
-        "width": 1080, "height": 1920, "fps": 24,
-        "variables": {"main_title": "MY MOVIE"},
-        "scenes": [
-            {
-                "background-color": "#FF5733", "duration": 5.0,
-                "elements": [{"type": "text", "text": "SCENE 1", "style": "001", "settings": {"font-size": 100, "font-color": "white"}}]
-            },
-            {
-                "background-color": "#33FF57", "duration": 5.0,
-                "elements": [{"type": "text", "text": "SCENE 2", "style": "001", "settings": {"font-size": 100, "font-color": "white"}}]
-            }
-        ]
-    }
-
 
 def main() -> None:
     st.set_page_config(page_title="KOMBAJN AI Studio", page_icon="🎬", layout="wide")
@@ -64,24 +50,21 @@ def main() -> None:
         st.session_state["current_manifest"] = get_empty_manifest()
 
     with tab1:
-        # --- TOP BAR: Project Actions ---
+        # --- PROJECT ACTIONS ---
         with st.container(border=True):
             c1, c2, c3, c4 = st.columns([3, 2, 1, 1])
             projects = store.list_projects()
-            options = ["-- New Empty Project --", "🚀 LOAD DEMO"] + projects
-            sel = c1.selectbox("📁 Projects Library", options)
+            options = ["-- New Empty Project --"] + projects
+            sel = c1.selectbox("📁 Saved Projects", options)
             
-            if sel == "🚀 LOAD DEMO" and st.session_state.get("last_loaded") != "demo":
-                st.session_state["current_manifest"] = get_demo_manifest()
-                st.session_state["last_loaded"] = "demo"; st.rerun()
+            if sel != "-- New Empty Project --" and st.session_state.get("last_loaded") != sel:
+                st.session_state["current_manifest"] = store.load_project(sel)
+                st.session_state["last_loaded"] = sel; st.rerun()
             elif sel == "-- New Empty Project --" and st.session_state.get("last_loaded") is not None:
                 st.session_state["current_manifest"] = get_empty_manifest()
                 st.session_state["last_loaded"] = None; st.rerun()
-            elif sel not in ["-- New Empty Project --", "🚀 LOAD DEMO"] and st.session_state.get("last_loaded") != sel:
-                st.session_state["current_manifest"] = store.load_project(sel)
-                st.session_state["last_loaded"] = sel; st.rerun()
             
-            proj_name = c2.text_input("Project Name", value="" if st.session_state.get("last_loaded") == "demo" else (st.session_state.get("last_loaded") or "my_video"))
+            proj_name = c2.text_input("Project Name", value=st.session_state.get("last_loaded") or "my_video")
             if c3.button("💾 SAVE", use_container_width=True):
                 store.save_project(proj_name, st.session_state["current_manifest"])
                 st.toast(f"Saved to {proj_name}.json")
@@ -89,21 +72,28 @@ def main() -> None:
                 st.session_state["current_manifest"] = get_empty_manifest()
                 st.session_state["last_loaded"] = None; st.rerun()
 
+        # --- MANIFEST LIBRARY ---
+        with st.expander("📂 Manifest Library (Pre-baked Demos)", expanded=True):
+            manifest_files = [f.name for f in MANIFESTS_PATH.glob("*.json")]
+            cols = st.columns(max(len(manifest_files), 4))
+            for idx, m_file in enumerate(manifest_files):
+                if cols[idx].button(f"Load {m_file}", use_container_width=True):
+                    with open(MANIFESTS_PATH / m_file, "r") as f:
+                        st.session_state["current_manifest"] = json.load(f)
+                    st.toast(f"Loaded {m_file}")
+                    st.rerun()
+
         # --- MAIN LAYOUT ---
         col_ed, col_pre = st.columns([3, 2])
         m = st.session_state["current_manifest"]
 
         with col_ed:
-            # 1. MOVIE GLOBAL SETTINGS
             with st.expander("🌍 GLOBAL MOVIE SETTINGS", expanded=False):
                 movie_data = pydantic_form(J2VMovie, key_prefix="movie_glob", initial_data=m, exclude_fields=["scenes", "elements"], asset_mgr=asset_mgr)
                 for k, v in movie_data.items(): m[k] = v
 
             st.markdown("---")
-            
-            # 2. SCENES
             st.subheader("🎬 Scenes")
-            if not m.get("scenes"): st.info("Add a scene to start building your video.")
             
             new_scenes = []
             for i, scene_data in enumerate(m.get("scenes", [])):
@@ -113,11 +103,8 @@ def main() -> None:
                     if sc_head2.button("❌ Remove", key=f"del_sc_{i}"):
                         m["scenes"].pop(i); st.rerun()
                     
-                    # Scene Base Properties
                     updated_scene = pydantic_form(J2VScene, key_prefix=f"sc_{i}", initial_data=scene_data, exclude_fields=["elements"], asset_mgr=asset_mgr)
                     
-                    # 3. ELEMENTS IN SCENE
-                    st.write("---")
                     st.write("**Elements**")
                     elements = scene_data.get("elements", [])
                     new_elements = []
@@ -152,21 +139,16 @@ def main() -> None:
                 st.rerun()
 
         with col_pre:
-            st.subheader("👁️ JSON Preview & Render")
+            st.subheader("👁️ Preview & Render")
             try:
                 valid_obj = J2VMovie(**m)
                 final_json = valid_obj.model_dump(by_alias=True)
                 st.success("✅ Manifest is valid")
-                
                 if st.button("🔥 START RENDERING", use_container_width=True, type="primary"):
                     res = _post_api("/tasks/j2v-render", valid_obj)
-                    st.balloons()
-                    st.session_state["last_task_id"] = res.get("task_id")
-                    st.success(f"Task submitted! ID: {res.get('task_id')}")
+                    st.balloons(); st.session_state["last_task_id"] = res.get("task_id"); st.success(f"Task ID: {res.get('task_id')}")
             except ValidationError as e:
-                st.error(f"❌ Validation Errors: {e.error_count()}")
-                for err in e.errors()[:3]: 
-                    st.caption(f"**{'.'.join(str(x) for x in err['loc'])}**: {err['msg']}")
+                st.error(f"❌ Errors: {e.error_count()}")
                 final_json = m
             
             st.code(json.dumps(final_json, indent=2), language="json")

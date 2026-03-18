@@ -56,7 +56,7 @@ class J2VMovieRenderer:
         return result
 
     def _should_render(self, condition: Optional[Union[str, bool]], context_vars: Dict[str, Any]) -> bool:
-        if condition is None: return True
+        if condition is None or condition == "": return True
         if isinstance(condition, bool): return condition
         val = self._evaluate_expression(condition, context_vars)
         return bool(val)
@@ -67,6 +67,7 @@ class J2VMovieRenderer:
         else: return self._evaluate_expression(data, context_vars)
 
     def render_scene(self, scene_dict: Dict[str, Any], index: int, global_vars: Dict[str, Any]) -> List[str]:
+        print(f"DEBUG: Processing scene {index}...")
         iterate_key = scene_dict.get("iterate")
         items_to_iterate = []
         if iterate_key and iterate_key in global_vars:
@@ -78,7 +79,9 @@ class J2VMovieRenderer:
 
         rendered_paths = []
         for i, (s_dict, context_vars) in enumerate(items_to_iterate):
-            if not self._should_render(s_dict.get("condition"), context_vars): continue
+            if not self._should_render(s_dict.get("condition"), context_vars):
+                print(f"DEBUG: Skipping scene {index} due to condition")
+                continue
             
             s_data = self._process_variables(s_dict, context_vars)
             scene = J2VScene(**s_data)
@@ -102,8 +105,9 @@ class J2VMovieRenderer:
                             visual_clips.append(clip)
                             if clip.audio: audio_items.append(clip.audio)
                         else: audio_items.append(clip)
+                    else: print(f"WARNING: Processor for {el_data.get('type')} returned None!")
                 except Exception as e:
-                    print(f"CRITICAL ERROR in processor for {el_data['type']}: {e}")
+                    print(f"CRITICAL ERROR in processor for {el_data.get('type')}: {e}")
                     raise e
 
             scene_duration = scene.duration if scene.duration != -1 else bg_duration
@@ -152,11 +156,14 @@ class J2VMovieRenderer:
             for c in visual_clips: c.close()
             for a in audio_items: a.close()
             rendered_paths.append(str(output_path))
+            print(f"DEBUG: Successfully rendered {output_path}")
         return rendered_paths
 
     def render_full_movie(self, output_path: str):
         all_scene_files = []
-        for i, scene_dict in enumerate(self.raw_manifest.get("scenes", [])):
+        for i, scene in enumerate(self.movie.scenes):
+            # Convert Pydantic scene to dict for renderer compatibility
+            scene_dict = scene.model_dump()
             paths = self.render_scene(scene_dict, i, self.movie_vars)
             all_scene_files.extend(paths)
         if not all_scene_files: raise ValueError("No scenes rendered.")
