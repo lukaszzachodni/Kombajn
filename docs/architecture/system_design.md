@@ -1,37 +1,24 @@
-# KOMBAJN AI System Design Overview
+# System Design: KOMBAJN AI
 
-## Core Philosophy: The Atomic Factory
-KOMBAJN AI is not a monolithic application; it is a **Distributed Atomic Engine**. The fundamental principle is that **no complex operation is ever performed as a single task.** Every piece of work—from high-level project coordination to low-level pixel processing—is decomposed into small, independent, and idempotent "atoms" managed by Celery queues.
+## Overview
+KOMBAJN AI is a modular video rendering engine based on Pydantic v2 schemas and MoviePy, simulating JSON2Video manifest logic.
 
----
+## Recent Architectural Changes (March 2026)
+- **Manifest-as-Code**: Projects are stored as `.json` files in `/data/projects` to enable Git-based versioning and syncing between environments.
+- **Dynamic Frontend Composer**: Built on top of Streamlit, dynamically generates forms from Pydantic models using a custom `ui_builder.py` module.
+- **Asset Management**: 
+    - Dedicated storage in `/data/assets/{images, videos, audio, fonts}`.
+    - Automatic deduplication using MD5 file hashing.
+    - Integrated Asset Picker in the UI with file upload capabilities.
+- **Improved Data Integrity**: Discriminated unions (`J2VAnyElement`) used for polymorphic elements in the Pydantic models, enabling strict validation and full OpenAPI documentation coverage.
 
-## 1. Universal Atomic-Task Architecture
-Every module in the system (Audio, Vision, Logic, Video) follows the same execution pattern:
-- **No Monolithic Tasks**: If a task takes more than a few seconds or consumes significant VRAM/CPU, it must be split.
-- **Queue-First Communication**: Modules never call each other directly via internal APIs.
-- **Idempotency**: Every atomic task can be retried safely.
+## Key Modules
+- `backend/app/engine/j2v_types.py`: The "Source of Truth". Contains all data models and union definitions.
+- `backend/app/engine/asset_manager.py`: Handles asset storage and file system interactions.
+- `backend/app/engine/project_store.py`: Persistent storage for project manifests.
+- `backend/app/engine/ui_builder.py`: Maps Pydantic schemas to Streamlit widgets with field prioritization and nested UI handling.
 
-## 2. Dynamic Resource Routing (KombajnRouter)
-To ensure the system remains responsive on a single machine while being ready for the cloud, we use a **Dynamic Routing** layer:
-- **Separation of Concerns**: Tasks are routed based on their resource needs (IO vs. CPU vs. GPU).
-- **Routing Hints**: The system can override default local routing with hints (e.g., `routing_hint='runpod'`) to outsource specific tasks without changing business logic.
-- **Zero-Code Scaling**: Moving a task from local to cloud is an infrastructure change (Docker/Settings), not a code rewrite.
-
-## 3. JSON-Driven Orchestration (Manifests)
-The state and logic of a project are defined by declarative JSON manifests (Pydantic v2).
-- **Compute Agnostic**: Since tasks are atomic and manifests are JSON, the system can distribute work across any node.
-
-## 4. Compute Factory & Hardware Mapping
-Workers are "specialists" listening to specific queues:
-- **`q_io` / `q_default`**: Fast, non-blocking tasks (API calls, small DB updates, notifications).
-- **`q_cpu_edit`**: Heavy CPU-bound tasks (FFMPEG rendering, MoviePy montage). Limited to low concurrency locally to prevent OS freezing.
-- **`q_gpu_local`**: Local AI inference (Vision, Transcription).
-- **`q_runpod` / `q_cloud`**: Reserved for external compute nodes.
-
-## 6. J2V Local Engine (Local Foundry)
-In addition to the Atomic Tasks, the system includes a dedicated **JSON2Video Local Clone** engine:
-- **Compatibility**: Directly renders standard J2V manifests without cloud APIs.
-- **Architectural Excellence**: Fully OOP and SOLID compliant. Uses a **Factory Pattern** to resolve element processors.
-- **Robustness**: Implements a custom frame-by-frame compositor to bypass legacy MoviePy stability issues.
-- **Dynamic Logic**: Supports native J2V expressions (`{{var}}`), conditions, and data-driven iterations (`iterate`).
-
+## Known Limitations / TODOs
+- **Circular Imports**: Managed via `TYPE_CHECKING` and `model_rebuild()` due to Pydantic/OpenAPI requirements for complex unions.
+- **Performance**: Heavy AI image generation and rendering processes are offloaded to Celery workers (`worker_io`, `worker_editor`).
+- **UI UX**: "Expert Mode" in Composer allows manual JSON editing for advanced manifest features not yet supported by the dynamic form.

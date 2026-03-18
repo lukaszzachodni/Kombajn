@@ -67,8 +67,9 @@ class J2VTextProcessor(J2VProcessor):
             el.text,
             fontsize=settings.get("font-size", 70),
             color=settings.get("font-color", "white"),
-            font=settings.get("font-family", "DejaVu-Sans"),
-            method="label"
+            font="Arial",
+            method="caption",
+            size=(width, None)
         ).set_duration(duration)
         if txt_clip.ismask: txt_clip = txt_clip.to_RGB()
         v_pos = settings.get("vertical-position", "center")

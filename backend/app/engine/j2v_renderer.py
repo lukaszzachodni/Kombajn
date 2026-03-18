@@ -9,11 +9,6 @@ from .j2v_types import J2VMovie, J2VScene
 from .j2v_factory import J2VProcessorFactory
 
 class J2VMovieRenderer:
-    """
-    Top-level orchestrator for rendering a J2V project locally.
-    Uses a custom frame-by-frame compositor to avoid MoviePy broadcasting bugs.
-    """
-    
     RESOLUTION_MAP = {
         "full-hd": (1920, 1080),
         "shorts": (1080, 1920),
@@ -40,7 +35,6 @@ class J2VMovieRenderer:
         pattern = r"\{\{\s*(.*?)\s*\}\}"
         def replacer(match):
             key = match.group(1)
-            # Basic comparison logic
             for op in ["==", "!=", ">", "<"]:
                 if op in key:
                     parts = key.split(op)
@@ -68,12 +62,9 @@ class J2VMovieRenderer:
         return bool(val)
 
     def _process_variables(self, data: Any, context_vars: Dict[str, Any]) -> Any:
-        if isinstance(data, dict):
-            return {k: self._process_variables(v, context_vars) for k, v in data.items()}
-        elif isinstance(data, list):
-            return [self._process_variables(i, context_vars) for i in data]
-        else:
-            return self._evaluate_expression(data, context_vars)
+        if isinstance(data, dict): return {k: self._process_variables(v, context_vars) for k, v in data.items()}
+        elif isinstance(data, list): return [self._process_variables(i, context_vars) for i in data]
+        else: return self._evaluate_expression(data, context_vars)
 
     def render_scene(self, scene_dict: Dict[str, Any], index: int, global_vars: Dict[str, Any]) -> List[str]:
         iterate_key = scene_dict.get("iterate")
@@ -82,10 +73,8 @@ class J2VMovieRenderer:
             for item_data in global_vars[iterate_key]:
                 new_scene = scene_dict.copy()
                 new_scene.pop("iterate")
-                local_vars = {**global_vars, **item_data}
-                items_to_iterate.append((new_scene, local_vars))
-        else:
-            items_to_iterate = [(scene_dict, global_vars)]
+                items_to_iterate.append((new_scene, {**global_vars, **item_data}))
+        else: items_to_iterate = [(scene_dict, global_vars)]
 
         rendered_paths = []
         for i, (s_dict, context_vars) in enumerate(items_to_iterate):
@@ -94,43 +83,41 @@ class J2VMovieRenderer:
             s_data = self._process_variables(s_dict, context_vars)
             scene = J2VScene(**s_data)
             output_path = self.temp_dir / f"scene_{index}_{i:03d}.mp4"
-            
             bg_duration = scene.duration if scene.duration > 0 else 5.0
             
             visual_clips = []
             audio_items = []
             
-            # Add base background
             bg_color_hex = scene.background_color.lstrip('#')
             bg_rgb = tuple(int(bg_color_hex[i:i+2], 16) for i in (0, 2, 4))
             bg_clip = ColorClip(size=(self.movie.width, self.movie.height), color=bg_rgb, duration=bg_duration)
             visual_clips.append(bg_clip)
 
             for el_data in s_data.get("elements", []):
-                processor = J2VProcessorFactory.get_processor(el_data["type"])
-                clip = processor.process(self.movie.width, self.movie.height, el_data, bg_duration)
-                
-                if hasattr(clip, "w") and hasattr(clip, "h"):
-                    visual_clips.append(clip)
-                    if clip.audio: audio_items.append(clip.audio)
-                else:
-                    audio_items.append(clip)
+                try:
+                    processor = J2VProcessorFactory.get_processor(el_data["type"])
+                    clip = processor.process(self.movie.width, self.movie.height, el_data, bg_duration)
+                    if clip:
+                        if hasattr(clip, "w") and hasattr(clip, "h"):
+                            visual_clips.append(clip)
+                            if clip.audio: audio_items.append(clip.audio)
+                        else: audio_items.append(clip)
+                except Exception as e:
+                    print(f"CRITICAL ERROR in processor for {el_data['type']}: {e}")
+                    raise e
 
-            # Resolve scene duration
-            if scene.duration == -1:
-                all_ends = [c.end for c in visual_clips] + [c.end for c in audio_items]
-                scene_duration = max(all_ends) if all_ends else bg_duration
-            else:
-                scene_duration = scene.duration
+            scene_duration = scene.duration if scene.duration != -1 else bg_duration
 
-            # 2. Custom Frame Compositor Logic
             def resolve_pos(pos, frame_size, clip_size):
-                fx, fy = pos
                 fw, fh = frame_size
                 cw, ch = clip_size
-                rx = (fw - cw) // 2 if fx == 'center' else (fw - cw if fx == 'right' else int(fx))
-                ry = (fh - ch) // 2 if fy == 'center' else (fh - ch if fy == 'bottom' else int(fy))
-                return rx, ry
+                if isinstance(pos, (tuple, list)):
+                    x = (fw - cw) // 2 if pos[0] == 'center' else (fw - cw if pos[0] == 'right' else int(pos[0]))
+                    y = (fh - ch) // 2 if pos[1] == 'center' else (fh - ch if pos[1] == 'bottom' else int(pos[1]))
+                    return x, y
+                if isinstance(pos, str):
+                    if pos == 'center': return (fw - cw) // 2, (fh - ch) // 2
+                return 0, 0
 
             def make_frame(t):
                 frame = visual_clips[0].get_frame(t).copy()
@@ -143,37 +130,28 @@ class J2VMovieRenderer:
                         if clip.mask:
                             mask = clip.mask.get_frame(t - clip.start)
                             if len(mask.shape) == 2: mask = np.dstack([mask]*3)
-                            x1, y1 = max(0, x), max(0, y)
-                            x2, y2 = min(fw, x + cw), min(fh, y + ch)
-                            cx1, cy1 = max(0, -x), max(0, -y)
-                            cx2, cy2 = cx1 + (x2 - x1), cy1 + (y2 - y1)
-                            if x2 > x1 and y2 > y1:
-                                frame[y1:y2, x1:x2] = (mask[cy1:cy2, cx1:cx2] * clip_frame[cy1:cy2, cx1:cx2] + (1 - mask[cy1:cy2, cx1:cx2]) * frame[y1:y2, x1:x2]).astype('uint8')
+                            x1, y1 = max(0, int(x)), max(0, int(y))
+                            x2, y2 = min(fw, x1 + cw), min(fh, y1 + ch)
+                            cx1, cy1 = max(0, -int(x)), max(0, -int(y))
+                            frame[y1:y2, x1:x2] = (mask[cy1:cy1+(y2-y1), cx1:cx1+(x2-x1)] * clip_frame[cy1:cy1+(y2-y1), cx1:cx1+(x2-x1)] + (1 - mask[cy1:cy1+(y2-y1), cx1:cx1+(x2-x1)]) * frame[y1:y2, x1:x2]).astype('uint8')
                         else:
-                            x1, y1, x2, y2 = max(0, x), max(0, y), min(fw, x + cw), min(fh, y + ch)
-                            if x2 > x1 and y2 > y1:
-                                frame[y1:y2, x1:x2] = clip_frame[max(0, -y):max(0, -y)+(y2-y1), max(0, -x):max(0, -x)+(x2-x1)]
+                            x1, y1 = max(0, int(x)), max(0, int(y))
+                            x2, y2 = min(fw, x1 + cw), min(fh, y1 + ch)
+                            frame[y1:y2, x1:x2] = clip_frame[max(0, -int(y)):max(0, -int(y))+(y2-y1), max(0, -int(x)):max(0, -int(x))+(x2-x1)]
                 return frame
 
             final_visual = VideoClip(make_frame, duration=scene_duration)
-
             if audio_items:
-                # CRITICAL: Ensure audio clips are explicitly subclipped to avoid out-of-bounds OSError
                 safe_audio = []
                 for a in audio_items:
-                    # Clip audio to its reported duration or the scene duration
                     actual_duration = min(a.duration, scene_duration - a.start)
-                    if actual_duration > 0:
-                        safe_audio.append(a.subclip(0, actual_duration).set_start(a.start))
-                if safe_audio:
-                    final_visual = final_visual.set_audio(CompositeAudioClip(safe_audio))
+                    if actual_duration > 0: safe_audio.append(a.subclip(0, actual_duration).set_start(a.start))
+                if safe_audio: final_visual = final_visual.set_audio(CompositeAudioClip(safe_audio))
 
             final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec="libx264", audio_codec="aac", logger=None)
-            
             for c in visual_clips: c.close()
             for a in audio_items: a.close()
             rendered_paths.append(str(output_path))
-            
         return rendered_paths
 
     def render_full_movie(self, output_path: str):
@@ -181,12 +159,9 @@ class J2VMovieRenderer:
         for i, scene_dict in enumerate(self.raw_manifest.get("scenes", [])):
             paths = self.render_scene(scene_dict, i, self.movie_vars)
             all_scene_files.extend(paths)
-            
         if not all_scene_files: raise ValueError("No scenes rendered.")
-
         clips = [VideoFileClip(p) for p in all_scene_files]
         final_video = concatenate_videoclips(clips, method="compose")
         final_video.write_videofile(output_path, fps=self.movie.fps, codec="libx264", audio_codec="aac")
-        
         for c in clips: c.close()
         for p in all_scene_files: Path(p).unlink()
