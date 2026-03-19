@@ -14,6 +14,13 @@ x-worker-base: &worker-base
     - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
     - KOMBAJN_DRY_RUN=false
     - PYTHONPATH=.
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu, video]
   depends_on:
     redis:
       condition: service_healthy
@@ -42,6 +49,13 @@ services:
       - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
       - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
       - PYTHONPATH=.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, video]
     depends_on:
       redis:
         condition: service_healthy
@@ -72,7 +86,7 @@ services:
   worker_editor:
     <<: *worker-base
     container_name: kombajn_worker_editor
-    command: celery -A backend.app.celery_app.celery_app worker -n worker_editor -Q q_cpu_edit -l info --concurrency=1 --prefetch-multiplier=1 -E
+    command: celery -A backend.app.celery_app.celery_app worker -n worker_editor -Q q_cpu_edit -l info --concurrency=3 --prefetch-multiplier=1 -E
 
   flower:
     build:

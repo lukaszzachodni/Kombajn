@@ -19,6 +19,14 @@
     - API endpoints separated into modules in `backend/app/api/`.
     - Data structures in `backend/app/engine/elements/`.
 
+## 🚀 Strategic Roadmap & ROI (Post-Template Production)
+- **High-Performance "Fast-Path"**: Po wdrożeniu masowej produkcji z szablonów, priorytetem jest implementacja `J2VGPUAccelerator`.
+- **GPU-Centric Orchestration**: Przeniesienie operacji skalowania, mozaiki i dekodowania z MoviePy (CPU) bezpośrednio do filtrów FFmpeg/CUDA (GPU).
+- **Hybrid Rendering Model**:
+    - **Simple/Heavy Scenes** (wideo, tła, mozaiki): Direct FFmpeg/CUDA (ROI: 5-10x speedup).
+    - **Complex/Creative Scenes** (dynamiczne napisy, filtry artystyczne): MoviePy/CPU.
+- **Goal**: Umożliwienie masowej produkcji wideo 4K/60fps na maszynach o słabszym CPU (np. pod zlecenia Fiverr) przy 100% wykorzystaniu enkodera NVENC/HEVC.
+
 ## 🎥 Rendering Standards
 - **Atomicity**: Rendering a single scene is an atomic unit of work.
 - **Stability**: Always convert clips to RGB/RGBA and use explicit sizes.

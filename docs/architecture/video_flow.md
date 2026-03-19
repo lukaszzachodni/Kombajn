@@ -39,3 +39,19 @@ The video rendering pipeline in KOMBAJN AI follows an **Atomic-Task Architecture
 ## Hardware Isolation Strategy
 - **IO Worker**: Handles all non-heavy tasks (metadata, API calls) in `q_io` and `q_default`.
 - **Editor Worker**: Dedicated to `q_cpu_edit` (FFMPEG). By isolating it, we can scale it independently (e.g., move only this worker to a cloud node if local CPU is too slow).
+
+---
+
+## 🏎️ Hybrid GPU/CPU Strategy (Future Path)
+To maximize ROI on existing hardware (like GTX 1050 Ti), the system will implement a **Fast-Path Dispatcher**:
+
+1. **MoviePy Path (Current Default)**:
+   - For creative scenes with dynamic text, rotation, and complex filters.
+   - CPU-bound: High resource consumption on host processor.
+   - GPU usage: Final encoding stage only (`h264_nvenc` / `hevc_nvenc`).
+
+2. **FFmpeg Fast-Path (Future Implementation)**:
+   - For "Heavy-Duty" scenes: mosaics, multi-video backgrounds, raw footage assembly.
+   - Logic: Bypasses Python/NumPy pixel manipulation.
+   - Hardware: 100% GPU processing using **NVDEC** (decoding), **scale_cuda** (scaling), and **xstack_cuda** (compositing).
+   - Benefit: Near-zero CPU impact, 5x-10x speedup for 4K/60fps projects.

@@ -1,5 +1,6 @@
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 import numpy as np
@@ -23,6 +24,37 @@ class J2VMovieRenderer:
         self._resolve_resolution()
         self.temp_dir = Path("/data/ssd/temp") / "j2v_local"
         self.temp_dir.mkdir(parents=True, exist_ok=True)
+        self.video_codec = self._detect_codec()
+
+    def _detect_codec(self) -> str:
+        # Test hevc_nvenc (H.265) - najcięższy i najlepszy dla GPU
+        try:
+            test_cmd = [
+                "/usr/bin/ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
+                "-c:v", "hevc_nvenc", "-f", "null", "-"
+            ]
+            res = subprocess.run(test_cmd, capture_output=True, text=True)
+            if res.returncode == 0:
+                print("DEBUG: GPU Acceleration (hevc_nvenc / H.265) verified and enabled.")
+                return "hevc_nvenc"
+        except Exception:
+            pass
+
+        # Test h264_nvenc (H.264) - standardowy dla GPU
+        try:
+            test_cmd = [
+                "/usr/bin/ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
+                "-c:v", "h264_nvenc", "-f", "null", "-"
+            ]
+            res = subprocess.run(test_cmd, capture_output=True, text=True)
+            if res.returncode == 0:
+                print("DEBUG: GPU Acceleration (h264_nvenc / H.264) verified and enabled.")
+                return "h264_nvenc"
+        except Exception:
+            pass
+
+        print("DEBUG: GPU Acceleration not working. Using software encoding (libx264).")
+        return "libx264"
 
     def _resolve_resolution(self):
         if self.movie.resolution in self.RESOLUTION_MAP:
@@ -152,7 +184,7 @@ class J2VMovieRenderer:
                     if actual_duration > 0: safe_audio.append(a.subclip(0, actual_duration).set_start(a.start))
                 if safe_audio: final_visual = final_visual.set_audio(CompositeAudioClip(safe_audio))
 
-            final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec="libx264", audio_codec="aac", logger=None)
+            final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec=self.video_codec, audio_codec="aac", logger=None)
             for c in visual_clips: c.close()
             for a in audio_items: a.close()
             rendered_paths.append(str(output_path))
@@ -169,6 +201,6 @@ class J2VMovieRenderer:
         if not all_scene_files: raise ValueError("No scenes rendered.")
         clips = [VideoFileClip(p) for p in all_scene_files]
         final_video = concatenate_videoclips(clips, method="compose")
-        final_video.write_videofile(output_path, fps=self.movie.fps, codec="libx264", audio_codec="aac")
+        final_video.write_videofile(output_path, fps=self.movie.fps, codec=self.video_codec, audio_codec="aac")
         for c in clips: c.close()
         for p in all_scene_files: Path(p).unlink()
