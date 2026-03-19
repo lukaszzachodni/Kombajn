@@ -1,24 +1,33 @@
 # System Design: KOMBAJN AI
 
 ## Overview
-KOMBAJN AI is a modular video rendering engine based on Pydantic v2 schemas and MoviePy, simulating JSON2Video manifest logic.
+KOMBAJN AI is a modular video rendering engine based on Pydantic v2 schemas and MoviePy.
 
-## Recent Architectural Changes (March 2026)
-- **Manifest-as-Code**: Projects are stored as `.json` files in `/data/projects` to enable Git-based versioning and syncing between environments.
-- **Dynamic Frontend Composer**: Built on top of Streamlit, dynamically generates forms from Pydantic models using a custom `ui_builder.py` module.
-- **Asset Management**: 
-    - Dedicated storage in `/data/assets/{images, videos, audio, fonts}`.
-    - Automatic deduplication using MD5 file hashing.
-    - Integrated Asset Picker in the UI with file upload capabilities.
-- **Improved Data Integrity**: Discriminated unions (`J2VAnyElement`) used for polymorphic elements in the Pydantic models, enabling strict validation and full OpenAPI documentation coverage.
+## Domain Definitions & Flow
 
-## Key Modules
-- `backend/app/engine/j2v_types.py`: The "Source of Truth". Contains all data models and union definitions.
-- `backend/app/engine/asset_manager.py`: Handles asset storage and file system interactions.
-- `backend/app/engine/project_store.py`: Persistent storage for project manifests.
-- `backend/app/engine/ui_builder.py`: Maps Pydantic schemas to Streamlit widgets with field prioritization and nested UI handling.
+### Key Concepts
+- **Template**: The "Blueprint". Describes the montage logic, timing (chronology), and spatial layout of elements. It defines *how* the movie is assembled, but *not* the content (Assets).
+- **Assets**: Raw media (images, audio, video, text) used to fulfill the template requirements.
+- **Project**: The end-to-end client engagement encompassing the Template, specific Assets, and final generated Outputs.
+- **Manifest**: The concrete, final JSON produced after injecting Assets into a Template. It contains resolved paths, specific data, and is ready for the Worker.
+- **Queue (Job)**: The processing channel (e.g., `q_cpu_edit`) where tasks are dispatched.
+- **Task**: The atomic unit of work (rendering one Manifest) processed by a Worker.
+- **Output (Render)**: The final `.mp4` file produced by a Worker after executing a Task.
 
-## Known Limitations / TODOs
-- **Circular Imports**: Managed via `TYPE_CHECKING` and `model_rebuild()` due to Pydantic/OpenAPI requirements for complex unions.
-- **Performance**: Heavy AI image generation and rendering processes are offloaded to Celery workers (`worker_io`, `worker_editor`).
-- **UI UX**: "Expert Mode" in Composer allows manual JSON editing for advanced manifest features not yet supported by the dynamic form.
+### Processing Flow
+1. **Definition**: You design the **Template** (spatial/temporal montage logic).
+2. **Configuration**: You create a **Project** by selecting a Template and providing the specific **Assets** (content).
+3. **Orchestration**: The system compiles a **Manifest** (the ready-to-render JSON).
+4. **Execution**: The Manifest is dispatched as a **Task** to a **Queue**.
+5. **Production**: A **Worker** processes the Task and produces the final **Output**.
+
+## Modular Structure
+The codebase is modularized:
+- `backend/app/engine/elements/`: Pydantic models for elements.
+- `backend/app/engine/processors/`: MoviePy rendering logic.
+- `backend/app/engine/j2v_types.py`: Unified registry (`J2VAnyElement`).
+- `backend/app/api/`: Modular FastAPI endpoints.
+
+## Testing Standards
+- All J2V manifest tests must use JSON files stored in `backend/app/tests/manifests/`.
+- Integration tests verify the flow: `Manifest JSON` -> `Pydantic` -> `Renderer` -> `MoviePy Output`.
