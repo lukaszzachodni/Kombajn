@@ -34,6 +34,14 @@ The video rendering pipeline in KOMBAJN AI follows an **Atomic-Task Architecture
 - **Actor**: Worker / Orchestrator
 - **Action**: Moves final file to `/data/ssd/renders/{project_id}/` and clears the `temp/` directory.
 
+## 🔄 Lifecycle: Atomic Rendering (Planned 4-Task Model)
+Aby zapewnić maksymalną wydajność i odporność, każdy render filmu musi przebiegać w 4 etapach:
+
+1. **Task 1: API Request & Dispatch**: Front-end przesyła manifest do kolejki. System rejestruje zgłoszenie i przydziela mu `render_id`.
+2. **Task 2: Orchestration (Fan-Out)**: Orkiestrator parsuje manifest i dzieli film na atomowe sceny. Tworzy tzw. **Celery Chord**, delegując każdą scenę jako osobne zadanie do kolejki.
+3. **Task 3: Parallel Scene Rendering**: Niezależne workery renderują przypisane im sceny do wysokiej jakości plików tymczasowych (`.mp4`). Błąd w jednej scenie pozwala na jej ponowienie bez restartowania całego filmu.
+4. **Task 4: Assembly (Fan-In)**: Po pomyślnym ukończeniu wszystkich zadań ze scenami, wywoływany jest callback (Task 4), który scala pliki tymczasowe w finalny film i sprząta katalog roboczy.
+
 ---
 
 ## Hardware Isolation Strategy

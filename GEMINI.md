@@ -27,6 +27,11 @@
     - **Complex/Creative Scenes** (dynamiczne napisy, filtry artystyczne): MoviePy/CPU.
 - **Goal**: Umożliwienie masowej produkcji wideo 4K/60fps na maszynach o słabszym CPU (np. pod zlecenia Fiverr) przy 100% wykorzystaniu enkodera NVENC/HEVC.
 
+## 🛡️ Resilience & Atomicity Mandates
+- **Task Granularity**: Każdy render musi być rozbity na najmniejsze możliwe jednostki (sceny). Długie sceny (powyżej 5 min) powinny być dzielone na pod-zadania.
+- **Stateless Intermediate Storage**: Pliki tymczasowe scen muszą być traktowane jako checkpointy. W razie awarii, system musi umożliwiać wznowienie renderu od brakującej sceny bez powtarzania gotowych fragmentów.
+- **Fail-Fast**: Błąd w jednej scenie nie może blokować zasobów całego klastra; musi być raportowany natychmiast, umożliwiając poprawkę manifestu i "hot-retry".
+
 ## 🎥 Rendering Standards
 - **Atomicity**: Rendering a single scene is an atomic unit of work.
 - **Stability**: Always convert clips to RGB/RGBA and use explicit sizes.
