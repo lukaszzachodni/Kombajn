@@ -1,7 +1,7 @@
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from .api import health, tasks
+from .api import health, render_task, list_tasks
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "static"
@@ -9,7 +9,8 @@ STATIC_DIR = BASE_DIR / "static"
 app = FastAPI(title="KOMBAJN AI - Sprint 1 API")
 
 app.include_router(health.router)
-app.include_router(tasks.router, prefix="/tasks")
+app.include_router(render_task.router, prefix="/tasks")
+app.include_router(list_tasks.router, prefix="/tasks")
 
 @app.get("/", response_class=HTMLResponse)
 def landing() -> HTMLResponse:

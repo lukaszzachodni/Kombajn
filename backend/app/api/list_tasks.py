@@ -1,18 +1,9 @@
 from fastapi import APIRouter
-from ..celery_app import celery_app
-from ..engine.j2v_types import J2VMovie
+from ...celery_app import celery_app
 
 router = APIRouter()
 
-@router.post("/j2v-render")
-def create_j2v_render_task(manifest: J2VMovie):
-    async_result = celery_app.send_task(
-        "kombajn.tasks.j2v_render_movie",
-        kwargs={"manifest_dict": manifest.model_dump(by_alias=True)},
-    )
-    return {"task_id": async_result.id}
-
-@router.get("/")
+@router.get("/list")
 def list_tasks():
     i = celery_app.control.inspect()
     active = i.active() or {}
