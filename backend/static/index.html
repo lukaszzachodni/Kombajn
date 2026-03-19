@@ -97,7 +97,6 @@
             <h1 class="h5 mb-1 text-uppercase text-light">
               KOMBAJN AI <span class="text-secondary">/ The Visual Foundry</span>
             </h1>
-            <p class="mb-0 small text-secondary">Sprint 0 · Docker foundation</p>
           </div>
           <div
             class="d-inline-flex align-items-center gap-2 small border rounded-pill px-3 py-1 bg-dark-subtle text-light"
@@ -123,9 +122,7 @@
                       class="btn btn-outline-primary w-100 text-start"
                     >
                       <div class="fw-semibold">API · FastAPI docs</div>
-                      <div class="small text-secondary">
-                        Interactive endpoint testing (Swagger / OpenAPI).
-                      </div>
+                      <div class="small text-secondary">Interactive endpoint testing.</div>
                       <div class="small mt-1">
                         <code>http://localhost:8000/docs</code>
                       </div>
@@ -175,7 +172,23 @@
                         Real-time monitoring of Celery tasks and workers.
                       </div>
                       <div class="small mt-1">
-                        <code>http://localhost:5555 (Status: Auto-start)</code>
+                        <code>http://localhost:5555</code>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <a
+                      href="http://localhost:8081"
+                      target="_blank"
+                      rel="noreferrer"
+                      class="btn btn-outline-light w-100 text-start"
+                    >
+                      <div class="fw-semibold">💾 Redis (Data)</div>
+                      <div class="small text-secondary">
+                        Redis Commander data browser.
+                      </div>
+                      <div class="small mt-1">
+                        <code>redis://localhost:6379/0</code>
                       </div>
                     </a>
                   </div>
@@ -206,23 +219,8 @@
                         <td>Basic API healthcheck.</td>
                       </tr>
                       <tr>
-                        <td><span class="badge bg-success">GET</span></td>
-                        <td><code>/health/storage</code></td>
-                        <td>Test read/write in storage layer (SSD).</td>
-                      </tr>
-                      <tr>
-                        <td><span class="badge bg-success">GET</span></td>
-                        <td><code>/health/celery</code></td>
-                        <td>Checks if Celery worker is alive.</td>
-                      </tr>
-                      <tr>
-                        <td><span class="badge bg-success">GET</span></td>
-                        <td><code>/health/full</code></td>
-                        <td>Combined status of API + storage + queues.</td>
-                      </tr>
-                      <tr>
                         <td><span class="badge bg-primary">POST</span></td>
-                        <td><code>/tasks/generate-video</code></td>
+                        <td><code>/tasks/j2v-render</code></td>
                         <td>
                           Submits a video rendering task via JSON manifest.
                         </td>
@@ -271,12 +269,11 @@
           <span>
             This is a static startup panel – feel free to add more links to scenarios.
           </span>
-          <span><strong>Sprint&nbsp;0</strong> · Infrastructure & Foundation</span>
         </footer>
       </main>
     </div>
 
-    <!-- jQuery + Bootstrap JS (prosty, gotowy stack) -->
+    <!-- jQuery + Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
