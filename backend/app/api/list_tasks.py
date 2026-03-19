@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ...celery_app import celery_app
+from backend.app.celery_app import celery_app
 
 router = APIRouter()
 

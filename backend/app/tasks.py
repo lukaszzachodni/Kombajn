@@ -11,8 +11,6 @@ from .engine.j2v_renderer import J2VMovieRenderer
 @celery_app.task(name="kombajn.tasks.j2v_render_movie")
 def j2v_render_movie(manifest_dict: dict) -> dict:
     """Task to render a video using the J2V Local Clone renderer."""
-    print(f"DEBUG: Celery received manifest keys: {list(manifest_dict.keys())}")
-    
     render_id = f"j2v_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     output_dir = Path("/data/ssd/renders")
     output_dir.mkdir(parents=True, exist_ok=True)
