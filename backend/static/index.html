@@ -107,14 +107,14 @@
         </header>
 
         <div class="row g-3">
-          <section class="col-12 col-lg-7">
+          <section class="col-12">
             <div class="card bg-dark border-secondary-subtle h-100">
               <div class="card-body">
                 <h2 class="card-title h6 text-uppercase text-secondary mb-3">
                   Navigation
                 </h2>
                 <div class="row g-2">
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <a
                       href="/docs"
                       target="_blank"
@@ -123,12 +123,9 @@
                     >
                       <div class="fw-semibold">API · FastAPI docs</div>
                       <div class="small text-secondary">Interactive endpoint testing.</div>
-                      <div class="small mt-1">
-                        <code>http://localhost:8000/docs</code>
-                      </div>
                     </a>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <a
                       href="/health/full"
                       target="_blank"
@@ -139,44 +136,35 @@
                       <div class="small text-secondary">
                         API, Storage (SSD), and Celery + Redis queues.
                       </div>
-                      <div class="small mt-1">
-                        <code>GET /health/full</code>
-                      </div>
                     </a>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <a
                       href="http://localhost:8501"
                       target="_blank"
                       rel="noreferrer"
                       class="btn btn-outline-light w-100 text-start"
                     >
-                      <div class="fw-semibold">Scenario Front (Streamlit)</div>
+                      <div class="fw-semibold">🎬 J2V Studio</div>
                       <div class="small text-secondary">
                         Control panel for launching scenarios and rendering.
                       </div>
-                      <div class="small mt-1">
-                        <code>http://localhost:8501</code>
-                      </div>
                     </a>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <a
                       href="http://localhost:5555"
                       target="_blank"
                       rel="noreferrer"
                       class="btn btn-outline-light w-100 text-start"
                     >
-                      <div class="fw-semibold">Task Queues (Flower)</div>
+                      <div class="fw-semibold">📊 Flower (Tasks)</div>
                       <div class="small text-secondary">
                         Real-time monitoring of Celery tasks and workers.
                       </div>
-                      <div class="small mt-1">
-                        <code>http://localhost:5555</code>
-                      </div>
                     </a>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <a
                       href="http://localhost:8081"
                       target="_blank"
@@ -187,87 +175,19 @@
                       <div class="small text-secondary">
                         Redis Commander data browser.
                       </div>
-                      <div class="small mt-1">
-                        <code>redis://localhost:6379/0</code>
-                      </div>
                     </a>
                   </div>
                 </div>
               </div>
             </div>
           </section>
-
-          <aside class="col-12 col-lg-5">
-            <div class="card bg-dark border-secondary-subtle mb-3">
-              <div class="card-body">
-                <h2 class="card-title h6 text-uppercase text-secondary mb-3">
-                  API – Cheat Sheet
-                </h2>
-                <div class="table-responsive">
-                  <table class="table table-sm table-dark table-borderless mb-1">
-                    <thead class="small text-secondary">
-                      <tr>
-                        <th scope="col">Method</th>
-                        <th scope="col">Path</th>
-                        <th scope="col">Description</th>
-                      </tr>
-                    </thead>
-                    <tbody class="small align-middle">
-                      <tr>
-                        <td><span class="badge bg-success">GET</span></td>
-                        <td><code>/health</code></td>
-                        <td>Basic API healthcheck.</td>
-                      </tr>
-                      <tr>
-                        <td><span class="badge bg-primary">POST</span></td>
-                        <td><code>/tasks/j2v-render</code></td>
-                        <td>
-                          Submits a video rendering task via JSON manifest.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p class="small text-secondary mb-0">
-                  Full documentation and schemas are available at
-                  <a href="/docs" class="link-light" target="_blank">/docs</a>.
-                </p>
-              </div>
-            </div>
-
-            <div class="card bg-dark border-secondary-subtle">
-              <div class="card-body">
-                <h2 class="card-title h6 text-uppercase text-secondary mb-3">
-                  Local Stack Status
-                </h2>
-                <ul class="list-unstyled small mb-0">
-                  <li class="d-flex justify-content-between">
-                    <span class="text-secondary">API</span>
-                    <span><code>http://localhost:8000</code></span>
-                  </li>
-                  <li class="d-flex justify-content-between">
-                    <span class="text-secondary">Redis</span>
-                    <span><code>redis://localhost:6379/0</code></span>
-                  </li>
-                  <li class="d-flex justify-content-between">
-                    <span class="text-secondary">Worker</span>
-                    <span><code>worker1@kombajn</code></span>
-                  </li>
-                  <li class="d-flex justify-content-between">
-                    <span class="text-secondary">Storage</span>
-                    <span><code>/data/ssd · /data/usb · /data/hdd</code></span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </aside>
         </div>
 
         <footer
           class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-3 small text-secondary"
         >
           <span>
-            This is a static startup panel – feel free to add more links to scenarios.
+            Infrastructure & Foundation
           </span>
         </footer>
       </main>
