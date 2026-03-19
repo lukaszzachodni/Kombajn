@@ -7,8 +7,7 @@ import requests
 import streamlit as st
 from pydantic import ValidationError
 
-from backend.app.engine.j2v_types import J2VMovie, J2VScene, ImageElement, TextElement
-from backend.app.engine.j2v_models import ELEMENT_MODEL_MAP
+from backend.app.engine.j2v_types import J2VMovie, J2VScene, ImageElement, TextElement, ELEMENT_MODEL_MAP
 from backend.app.engine.ui_builder import pydantic_form
 from backend.app.engine.project_store import ProjectStore
 from backend.app.engine.asset_manager import AssetManager

@@ -19,6 +19,18 @@ J2VAnyElement = Annotated[
     Field(discriminator='type')
 ]
 
+# --- REGISTRY MAP ---
+ELEMENT_MODEL_MAP = {
+    "image": ImageElement,
+    "text": TextElement,
+    "audio": AudioElement,
+    "video": VideoElement,
+    "voice": VoiceElement,
+    "audiogram": AudiogramElement,
+    "subtitles": SubtitlesElement,
+    "component": ComponentElement
+}
+
 # --- CONTAINER OBJECTS ---
 
 class J2VScene(BaseModel):
