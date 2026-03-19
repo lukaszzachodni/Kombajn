@@ -9,11 +9,12 @@
       body { min-height: 100vh; background: #2b2b2b; color: #a9b7c6; font-size: 1.2rem; }
       .vf-shell { max-width: 1400px; background: #3c3f41; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7); border: 1px solid #4b4b4b; padding: 2.5rem; }
       .card.bg-dark { background-color: #3c3f41 !important; border-color: #4b4b4b !important; }
-      .card-title, .text-secondary { color: #a9b7c6 !important; }
-      .btn-outline-primary, .btn-outline-success, .btn-outline-light { border-color: #4b4b4b; color: #a9b7c6; text-align: left; margin-bottom: 0.8rem; padding: 1rem; }
-      .btn-outline-primary:hover, .btn-outline-success:hover, .btn-outline-light:hover { background-color: #4b4b4b; }
+      .text-secondary { color: #808080 !important; }
+      .btn-outline-primary, .btn-outline-success, .btn-outline-light { border-color: #4b4b4b; color: #ffffff !important; text-align: left; margin-bottom: 0.8rem; padding: 1rem; background-color: #313335; }
+      .btn-outline-primary:hover, .btn-outline-success:hover, .btn-outline-light:hover { background-color: #4b4b4b; color: #ffffff !important; }
       .dictionary-item { margin-bottom: 1.5rem; }
-      .dictionary-dt { color: #6897bb; font-weight: bold; font-size: 1.3rem; }
+      .dictionary-dt { color: #ffc66d; font-weight: bold; font-size: 1.3rem; }
+      .dictionary-dd { color: #a9b7c6; }
     </style>
   </head>
   <body>
@@ -31,23 +32,23 @@
                 <h2 class="card-title h4 text-uppercase text-secondary mb-4">Navigation</h2>
                 <a href="/docs" target="_blank" class="btn btn-outline-primary w-100">
                   <div class="fw-semibold">API · FastAPI docs</div>
-                  <div class="small">Interactive endpoint testing (Swagger / OpenAPI).</div>
+                  <div class="small text-secondary">Interactive endpoint testing (Swagger / OpenAPI).</div>
                 </a>
                 <a href="/health/full" target="_blank" class="btn btn-outline-success w-100">
                   <div class="fw-semibold">Health · Full Path</div>
-                  <div class="small">API, Storage (SSD), and Celery + Redis queues.</div>
+                  <div class="small text-secondary">API, Storage (SSD), and Celery + Redis queues.</div>
                 </a>
                 <a href="http://localhost:8501" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">🎬 J2V Studio</div>
-                  <div class="small">Control panel for launching scenarios and rendering.</div>
+                  <div class="small text-secondary">Control panel for launching scenarios and rendering.</div>
                 </a>
                 <a href="http://localhost:5555" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">📊 Flower (Tasks)</div>
-                  <div class="small">Real-time monitoring of Celery tasks and workers.</div>
+                  <div class="small text-secondary">Real-time monitoring of Celery tasks and workers.</div>
                 </a>
                 <a href="http://localhost:8081" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">💾 Redis (Data)</div>
-                  <div class="small">Redis Commander data browser.</div>
+                  <div class="small text-secondary">Redis Commander data browser.</div>
                 </a>
               </div>
             </div>
@@ -59,23 +60,23 @@
                 <h2 class="card-title h4 text-uppercase text-secondary mb-4">Domain Dictionary</h2>
                 <div class="dictionary-item">
                   <div class="dictionary-dt">Template</div>
-                  <div class="small">Bazowy wzorzec (JSON, zmienne, struktura).</div>
+                  <div class="dictionary-dd small">Bazowy wzorzec (JSON, zmienne, struktura).</div>
                 </div>
                 <div class="dictionary-item">
                   <div class="dictionary-dt">Project</div>
-                  <div class="small">Zlecenie dla klienta (konkretne dane/instancja).</div>
+                  <div class="dictionary-dd small">Zlecenie dla klienta (konkretne dane/instancja).</div>
                 </div>
                 <div class="dictionary-item">
                   <div class="dictionary-dt">Job (Queue)</div>
-                  <div class="small">Kanał dla zadań (np. q_cpu_edit).</div>
+                  <div class="dictionary-dd small">Kanał dla zadań (np. q_cpu_edit).</div>
                 </div>
                 <div class="dictionary-item">
                   <div class="dictionary-dt">Task</div>
-                  <div class="small">Atomowa robota do wykonania przez workera.</div>
+                  <div class="dictionary-dd small">Atomowa robota do wykonania przez workera.</div>
                 </div>
                 <div class="dictionary-item">
                   <div class="dictionary-dt">Output (Render)</div>
-                  <div class="small">Wynikowy plik MP4.</div>
+                  <div class="dictionary-dd small">Wynikowy plik MP4.</div>
                 </div>
               </div>
             </div>
