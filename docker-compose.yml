@@ -14,13 +14,6 @@ x-worker-base: &worker-base
     - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
     - KOMBAJN_DRY_RUN=false
     - PYTHONPATH=.
-  deploy:
-    resources:
-      reservations:
-        devices:
-          - driver: nvidia
-            count: all
-            capabilities: [gpu, video]
   depends_on:
     redis:
       condition: service_healthy
@@ -31,31 +24,15 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: kombajn_api
-    command: >
-      uvicorn backend.app.main:app
-      --host 0.0.0.0
-      --port 8000
-      --reload
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
-      - ./backend:/app/backend
-      - ./data/projects:/data/projects
-      - ./data/assets:/data/assets
-      - ./data/ssd:/data/ssd
-      - ./data/usb:/data/usb
-      - ./data/hdd:/data/hdd
+      - .:/app
     ports:
       - "8000:8000"
     environment:
       - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
       - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
       - PYTHONPATH=.
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu, video]
     depends_on:
       redis:
         condition: service_healthy
@@ -67,9 +44,7 @@ services:
     container_name: kombajn_scenario_ui
     command: streamlit run backend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
     volumes:
-      - ./backend:/app/backend
-      - ./data/projects:/data/projects
-      - ./data/assets:/data/assets
+      - .:/app
     ports:
       - "8501:8501"
     environment:
@@ -86,12 +61,10 @@ services:
   worker_editor:
     <<: *worker-base
     container_name: kombajn_worker_editor
-    command: celery -A backend.app.celery_app.celery_app worker -n worker_editor -Q q_cpu_edit -l info --concurrency=3 --prefetch-multiplier=1 -E
+    command: celery -A backend.app.celery_app.celery_app worker -n worker_editor -Q q_cpu_edit -l info --concurrency=1 --prefetch-multiplier=1 -E
 
   flower:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    <<: *worker-base
     container_name: kombajn_flower
     restart: always
     command: >
@@ -100,10 +73,6 @@ services:
       flower
       --port=5555
       --inspect-timeout=3000
-    volumes:
-      - ./backend:/app/backend
-      - ./data/projects:/data/projects
-      - ./data/assets:/data/assets
     ports:
       - "5555:5555"
     environment:
