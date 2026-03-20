@@ -27,33 +27,31 @@ class J2VMovieRenderer:
         self.video_codec = self._detect_codec()
 
     def _detect_codec(self) -> str:
-        # Test hevc_nvenc (H.265) - najcięższy i najlepszy dla GPU
+        # Sprawdzamy czy ffmpeg jest dostępny
         try:
-            test_cmd = [
-                "/usr/bin/ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
-                "-c:v", "hevc_nvenc", "-f", "null", "-"
-            ]
-            res = subprocess.run(test_cmd, capture_output=True, text=True)
-            if res.returncode == 0:
-                print("DEBUG: GPU Acceleration (hevc_nvenc / H.265) verified and enabled.")
-                return "hevc_nvenc"
-        except Exception:
-            pass
+            subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("CRITICAL: ffmpeg not found in PATH! Falling back to libx264.")
+            return "libx264"
 
-        # Test h264_nvenc (H.264) - standardowy dla GPU
-        try:
-            test_cmd = [
-                "/usr/bin/ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
-                "-c:v", "h264_nvenc", "-f", "null", "-"
-            ]
-            res = subprocess.run(test_cmd, capture_output=True, text=True)
-            if res.returncode == 0:
-                print("DEBUG: GPU Acceleration (h264_nvenc / H.264) verified and enabled.")
-                return "h264_nvenc"
-        except Exception:
-            pass
+        # Lista priorytetowa enkoderów
+        encoders = ["hevc_nvenc", "h264_nvenc"]
+        
+        for enc in encoders:
+            try:
+                # Testujemy enkoder na pustym wejściu
+                test_cmd = [
+                    "ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
+                    "-c:v", enc, "-f", "null", "-"
+                ]
+                res = subprocess.run(test_cmd, capture_output=True, text=True)
+                if res.returncode == 0:
+                    print(f"DEBUG: GPU Acceleration ({enc}) verified.")
+                    return enc
+            except Exception:
+                continue
 
-        print("DEBUG: GPU Acceleration not working. Using software encoding (libx264).")
+        print("DEBUG: GPU Acceleration not working or not available. Using software encoding (libx264).")
         return "libx264"
 
     def _resolve_resolution(self):

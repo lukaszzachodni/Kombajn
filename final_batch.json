@@ -1,0 +1,37 @@
+[
+  {
+    "scene_name": "Quiz",
+    "settings": {
+      "title": "Quiz o zwierzętach",
+      "theme_color": "#FF0000"
+    }
+  },
+  {
+    "scene_name": "Quiz",
+    "settings": {
+      "title": "Quiz o kosmosie",
+      "theme_color": "#0000FF"
+    }
+  },
+  {
+    "scene_name": "Quiz",
+    "settings": {
+      "title": "Quiz o historii",
+      "theme_color": "#00FF00"
+    }
+  },
+  {
+    "scene_name": "Quiz",
+    "settings": {
+      "title": "Quiz o geografii",
+      "theme_color": "#FFFF00"
+    }
+  },
+  {
+    "scene_name": "Quiz",
+    "settings": {
+      "title": "Quiz o technologii",
+      "theme_color": "#FF00FF"
+    }
+  }
+]

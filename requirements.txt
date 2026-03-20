@@ -16,4 +16,4 @@ gTTS==2.5.1
 edge-tts==6.1.12
 pillow==10.4.0
 pillow-avif-plugin==1.4.3
-# Usunięto streamlit-pydantic (niekompatybilne z Pydantic v2)
+jinja2==3.1.4

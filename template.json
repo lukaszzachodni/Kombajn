@@ -1,0 +1,7 @@
+{
+  "scene_name": "Quiz",
+  "settings": {
+    "title": "{{title}}",
+    "theme_color": "{{color}}"
+  }
+}
