@@ -32,7 +32,13 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 *   **Obsługa czasu:** Parametry `start`, `duration`, `extra-time`, `fade-in`, `fade-out` są obsługiwane przez `J2VBaseProcessor.apply_common_properties`. Wartości `duration` (-1, -2) są prawidłowo interpretowane.
 
 ### VideoElement - Stan obecny i brakujące funkcjonalności:
-*(Szczegóły jak poprzednio)*
+
+*   **Podstawowa obsługa:** Model Pydantic (`VideoElement`) poprawnie definiuje parametry, w tym hybrydowe typy dla `volume`, `muted`, `loop`, `seek`, `width`, `height`, `x`, `y`, `rotate`. Pozwala to na ich konfigurację w manifestach.
+*   **Przetwarzanie:** Brak dedykowanego procesora (`processors/video.py`). Zakłada się, że tworzenie klipu `moviepy.editor.VideoFileClip` i stosowanie ogólnych właściwości czasowych (jak `start`, `duration`, `fade-in`/`out`) jest realizowane przez bazowy mechanizm (`J2VBaseProcessor` lub fabrykę).
+*   **Brakujące specyficzne dla video implementacje:**
+    *   Logika do stosowania specyficznych właściwości wideo: `volume`, `muted`, `loop`, `seek`, `resize` (wszystkie tryby), `crop`, `correction`, `chroma-key`, `flip_horizontal`/`flip_vertical`, `rotate`.
+    *   Implementacja zaawansowanych efektów `zoom`/`pan`, które prawdopodobnie wymagają animacji.
+*   **Rekomendacje:** Należy zaimplementować dedykowaną logikę dla `VideoElement`, która tworzy `VideoFileClip` i stosuje do niego wszystkie specyficzne parametry opisane w dokumentacji, wykorzystując odpowiednie metody MoviePy (np. `subclip`, `loop`, `volumex`, `resize`, `crop`, `fx` dla transformacji i efektów). `rotate` jest dziedziczone i prawdopodobnie obsługiwane przez `J2VBaseProcessor`. `zoom`/`pan` wymagają dalszego rozwoju.
 
 ### Brakujące/Do dalszej implementacji funkcjonalności (ogólne):
 
