@@ -1,8 +1,8 @@
 # Analiza możliwości renderowania i montażu wideo w Kombajn AI - Elementy
 
-## Podsumowanie stanu po wdrożeniu hybrydowego typowania dla szablonów, ulepszeniu TextElement, ImageElement oraz analizie AudioElement:
+## Podsumowanie stanu po wdrożeniu hybrydowego typowania dla szablonów, ulepszeniu TextElement, ImageElement oraz analizie AudioElement i VideoElement:
 
-Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w modelach Pydantic oraz implementacji elementów wizualnych i audio. Zaimplementowano hybrydowe typowanie (`HInt`, `HFloat`, `HBool`) w kluczowych modelach, co pozwala na elastyczne wykorzystanie zmiennych `{{...}}` dla większości parametrów. Testy integracyjne (`smoke_test_routing.py`) zakończyły się sukcesem, potwierdzając stabilność przepływu renderowania.
+Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w modelach Pydantic oraz implementacji elementów wizualnych i audio/video. Zaimplementowano hybrydowe typowanie (`HInt`, `HFloat`, `HBool`) w kluczowych modelach, co pozwala na elastyczne wykorzystanie zmiennych `{{...}}` dla większości parametrów. Testy integracyjne (`smoke_test_routing.py`) zakończyły się sukcesem, potwierdzając stabilność przepływu renderowania.
 
 ### TextElement - Ulepszona implementacja:
 
@@ -28,6 +28,15 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
     *   Logika do faktycznego stosowania specyficznych właściwości audio: `volume`, `muted`, `loop`, `seek` do obiektu `AudioFileClip` nie została zidentyfikowana w dedykowanym procesorze ani w `J2VBaseProcessor`.
     *   **Rekomendacje:** Należy zaimplementować logikę, która po utworzeniu `AudioFileClip`, zastosuje do niego: `seek` (przez `subclip`), `loop` (przez `loop`), `volume` i `muted` (przez `volumex`). Warto zweryfikować obsługę `duration` (-1, -2) w kontekście audio.
 
+### VideoElement - Stan obecny i brakujące funkcjonalności:
+
+*   **Podstawowa obsługa:** Model Pydantic (`VideoElement`) poprawnie definiuje parametry, w tym hybridne typy dla `volume`, `muted`, `loop`, `seek`, `width`, `height`, `x`, `y`, `rotate`. Pozwala to na ich konfigurację w manifestach.
+*   **Przetwarzanie:** Brak dedykowanego procesora (`processors/video.py`). Zakłada się, że tworzenie klipu `moviepy.editor.VideoFileClip` i stosowanie ogólnych właściwości czasowych (jak `start`, `duration`, `fade-in`/`out`) jest realizowane przez bazowy mechanizm (`J2VBaseProcessor` lub fabrykę).
+*   **Brakujące specyficzne dla video implementacje:**
+    *   Logika do stosowania specyficznych właściwości wideo: `volume`, `muted`, `loop`, `seek`, `resize` (wszystkie tryby), `crop`, `correction`, `chroma-key`, `flip_horizontal`/`flip_vertical`, `rotate`.
+    *   Implementacja zaawansowanych efektów `zoom`/`pan`, które prawdopodobnie wymagają animacji.
+*   **Rekomendacje:** Należy zaimplementować dedykowaną logikę dla `VideoElement`, która tworzy `VideoFileClip` i stosuje do niego wszystkie specyficzne parametry opisane w dokumentacji, wykorzystując odpowiednie metody MoviePy (np. `subclip`, `loop`, `volumex`, `resize`, `crop`, `fx` dla transformacji i efektów). Właściwość `rotate` jest dziedziczona i prawdopodobnie obsługiwana przez `J2VBaseProcessor`.
+
 ### Brakujące/Do dalszej implementacji funkcjonalności (ogólne):
 
 1.  **TextElement - Zaawansowane funkcje:** Obsługa `style` dla animacji tekstu, `outline`, `shadow`, pełne mapowanie `text-align`.
@@ -38,4 +47,4 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 6.  **Złożone wyrażenia i logika warunkowa:** Pełna ewaluacja złożonych wyrażeń w czasie renderowania wymaga doprecyzowania.
 7.  **Obsługa błędów i walidacja:** Dalsze wzmocnienie mechanizmów obsługi błędów, zwłaszcza przy interakcji z zewnętrznymi zasobami i API.
 
-Aplikacja jest teraz lepiej przygotowana do renderowania dynamicznych wideo z ulepszoną obsługą tekstu i obrazów, a jej możliwości (w tym stan `AudioElement`) zostały udokumentowane. Nadal jednak wiele funkcji opisanych w dokumentacji pozostaje do zaimplementowania.
+Aplikacja jest teraz lepiej przygotowana do renderowania dynamicznych wideo z ulepszoną obsługą tekstu, obrazów oraz analizą stanu `AudioElement` i `VideoElement`. Nadal jednak wiele funkcji opisanych w dokumentacji pozostaje do zaimplementowania.
