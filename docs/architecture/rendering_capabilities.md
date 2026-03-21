@@ -43,7 +43,7 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 ### Brakujące/Do dalszej implementacji funkcjonalności (ogólne):
 
 1.  **TextElement - Zaawansowane funkcje:** Obsługa `style` dla animacji tekstu, `outline`, `shadow`, pełne mapowanie `text-align`.
-2.  **ImageElement - Zaawansowane funkcje:** Implementacja generowania obrazów AI, pełna implementacja `zoom`/`pan`, `chroma-key`.
+2a. **ImageElement - Zaawansowane funkcje:** Implementacja generowania obrazów AI, pełna implementacja `zoom`/`pan`, `chroma-key`.
 3.  **Biblioteka komponentów animowanych:** `ComponentElement` jest zdefiniowany, ale jego integracja i wykorzystanie biblioteki komponentów wymaga dalszej pracy.
 4.  **Zaawansowane funkcje AI:** Synteza głosu, analiza wizualna.
 5.  **Pełne wykorzystanie akceleracji GPU (Fast-Path FFmpeg/CUDA Rendering):** Obecnie GPU jest używane głównie do kodowania. Dalszy rozwój obejmuje wykorzystanie GPU do kluczowych operacji renderowania (skalowanie, kompozycja).
