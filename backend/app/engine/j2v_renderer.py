@@ -17,6 +17,9 @@ from .j2v_types import J2VMovie, J2VScene
 from .j2v_factory import J2VProcessorFactory
 
 class J2VMovieRenderer:
+    # Class-level cache for the detected codec
+    _cached_codec: Optional[str] = None
+
     RESOLUTION_MAP = {
         "full-hd": (1920, 1080),
         "shorts": (1080, 1920),
@@ -24,14 +27,18 @@ class J2VMovieRenderer:
         "hd": (1280, 720)
     }
 
-    def __init__(self, manifest_dict: Dict[str, Any]):
+    def __init__(self, manifest_dict: Dict[str, Any], temp_dir: Optional[Path] = None):
         self.raw_manifest = manifest_dict
         self.movie_vars = manifest_dict.get("variables", {})
         self.movie = J2VMovie(**manifest_dict)
         self._resolve_resolution()
-        self.temp_dir = Path("/data/ssd/temp") / "j2v_local"
+        self.temp_dir = temp_dir or (Path("/data/ssd/temp") / "j2v_local")
         self.temp_dir.mkdir(parents=True, exist_ok=True)
-        self.video_codec = self._detect_codec()
+        
+        # Use cached codec if available, otherwise detect
+        if J2VMovieRenderer._cached_codec is None:
+            J2VMovieRenderer._cached_codec = self._detect_codec()
+        self.video_codec = J2VMovieRenderer._cached_codec
 
     def _detect_codec(self) -> str:
         # Check for explicit manual override to simulate "No GPU" environment
@@ -197,23 +204,40 @@ class J2VMovieRenderer:
                     if actual_duration > 0: safe_audio.append(a.subclip(0, actual_duration).set_start(a.start))
                 if safe_audio: final_visual = final_visual.set_audio(CompositeAudioClip(safe_audio))
 
-            final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec=self.video_codec, audio_codec="aac", logger=None)
-            for c in visual_clips: c.close()
-            for a in audio_items: a.close()
-            rendered_paths.append(str(output_path))
-            print(f"DEBUG: Successfully rendered {output_path}")
+            try:
+                final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec=self.video_codec, audio_codec="aac", logger=None)
+                rendered_paths.append(str(output_path))
+                print(f"DEBUG: Successfully rendered {output_path}")
+            finally:
+                final_visual.close()
+                for c in visual_clips: 
+                    try: c.close()
+                    except: pass
+                for a in audio_items: 
+                    try: a.close()
+                    except: pass
         return rendered_paths
 
     def render_full_movie(self, output_path: str):
         all_scene_files = []
-        for i, scene in enumerate(self.movie.scenes):
-            # Convert Pydantic scene to dict for renderer compatibility
-            scene_dict = scene.model_dump()
-            paths = self.render_scene(scene_dict, i, self.movie_vars)
-            all_scene_files.extend(paths)
-        if not all_scene_files: raise ValueError("No scenes rendered.")
-        clips = [VideoFileClip(p) for p in all_scene_files]
-        final_video = concatenate_videoclips(clips, method="compose")
-        final_video.write_videofile(output_path, fps=self.movie.fps, codec=self.video_codec, audio_codec="aac")
-        for c in clips: c.close()
-        for p in all_scene_files: Path(p).unlink()
+        try:
+            for i, scene in enumerate(self.movie.scenes):
+                # Convert Pydantic scene to dict for renderer compatibility
+                scene_dict = scene.model_dump()
+                paths = self.render_scene(scene_dict, i, self.movie_vars)
+                all_scene_files.extend(paths)
+            
+            if not all_scene_files: raise ValueError("No scenes rendered.")
+            
+            clips = [VideoFileClip(p) for p in all_scene_files]
+            try:
+                final_video = concatenate_videoclips(clips, method="compose")
+                final_video.write_videofile(output_path, fps=self.movie.fps, codec=self.video_codec, audio_codec="aac")
+            finally:
+                for c in clips: 
+                    try: c.close()
+                    except: pass
+        finally:
+            for p in all_scene_files: 
+                try: Path(p).unlink()
+                except: pass
