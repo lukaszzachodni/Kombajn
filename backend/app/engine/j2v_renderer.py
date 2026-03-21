@@ -34,6 +34,11 @@ class J2VMovieRenderer:
         self.video_codec = self._detect_codec()
 
     def _detect_codec(self) -> str:
+        # Check for explicit manual override to simulate "No GPU" environment
+        if os.environ.get("KOMBAJN_FORCE_CPU", "false").lower() == "true":
+            print("DEBUG: GPU Override active via environment variable. Forcing software encoding (libx264).")
+            return "libx264"
+
         # Priority list of encoders
         encoders = ["h264_nvenc", "hevc_nvenc"]
         

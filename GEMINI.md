@@ -40,3 +40,11 @@
 ## 🛠️ Operational Commands
 - Use `docker compose` (not `docker-compose`).
 - Verify routing with `smoke_test_routing.py`.
+
+## 💻 Production Environment (Host Hardware)
+- **CPU**: Intel Core i5-3470 (4 cores, 4 threads)
+- **RAM**: 24GB DDR3
+- **GPU**: NVIDIA GeForce GTX 1050 Ti (4GB VRAM)
+- **Storage**: SSD (SATA3)
+- **OS Context**: Linux with NVIDIA Container Runtime enabled.
+
