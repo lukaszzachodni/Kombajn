@@ -1,4 +1,4 @@
-# Analiza możliwości renderowania i montażu wideo w Kombajn AI - Elementy
+# Analiza możliwości renderowania i montażu wideo w Kombajn AI - Elementy i Zarządzanie Workflow
 
 ## Podsumowanie stanu po wdrożeniu hybrydowego typowania dla szablonów, ulepszeniu TextElement, ImageElement oraz analizie AudioElement i VideoElement:
 
@@ -6,7 +6,7 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 
 ### TextElement - Ulepszona implementacja:
 
-*   **Obsługa czcionek i tekstu:** Dodano dynamiczne ładowanie `font-family` i `font-weight` z `settings`. Implementacja `all_caps` pozwala na łatwe konwertowanie tekstu na wielkie litery.
+*   **Obsługa czcionek i tekstu:** Dodano dynamiczne ładowanie `font-family` i `font-App.py`
 *   **Tło tekstu:** Wprowadzono wsparcie dla `background-color` poprzez kompozycję `TextClip` z `ColorClip`.
 *   **Precyzyjne pozycjonowanie:** Udoskonalono logikę pozycjonowania, poprawnie interpretując wymiary elementu (`width`, `height`, `x`, `y`, `position`) oraz wyrównanie wewnętrzne (`vertical-position`, `horizontal-position` z `settings`), zgodnie z dokumentacją `Positioning.md`.
 *   **Zarządzanie zasobami:** Zapewniono zamykanie klipów MoviePy w blokach `try...except`.
@@ -39,6 +39,22 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
     *   Logika do stosowania specyficznych właściwości wideo: `volume`, `muted`, `loop`, `seek`, `resize` (wszystkie tryby), `crop`, `correction`, `chroma-key`, `flip_horizontal`/`flip_vertical`, `rotate`.
     *   Implementacja zaawansowanych efektów `zoom`/`pan`, które prawdopodobnie wymagają animacji.
 *   **Rekomendacje:** Należy zaimplementować dedykowaną logikę dla `VideoElement`, która tworzy `VideoFileClip` i stosuje do niego wszystkie specyficzne parametry opisane w dokumentacji, wykorzystując odpowiednie metody MoviePy (np. `subclip`, `loop`, `volumex`, `resize`, `crop`, `fx` dla transformacji i efektów). `rotate` jest dziedziczone i prawdopodobnie obsługiwane przez `J2VBaseProcessor`. `zoom`/`pan` wymagają dalszego rozwoju.
+
+### Nowe funkcjonalności do zaimplementowania - Zarządzanie Workflow i Odporność:
+
+Aby zapewnić pełną kontrolę nad procesem renderowania, zwiększyć odporność systemu na błędy i umożliwić efektywne zarządzanie projektami, należy zaimplementować następujące funkcjonalności:
+
+1.  **Zarządzanie zadaniami (Task Management):**
+    *   **Pauza, Stop, Anulowanie:** Możliwość wstrzymania, zatrzymania lub całkowitego anulowania trwającego zadania renderowania (sceny lub całego filmu).
+    *   **Wznawianie:** Funkcjonalność umożliwiająca wznowienie wstrzymanego zadania renderowania od momentu jego zatrzymania.
+
+2.  **Obsługa błędów i ponowne przetwarzanie:**
+    *   **Identyfikacja błędów:** System powinien być w stanie wykryć nieudane zadania Celery (np. błąd w renderowaniu konkretnej sceny).
+    *   **Naprawa i ponowne uruchomienie:** Mechanizmy pozwalające na izolację i ponowne przetworzenie tylko nieudanych zadań (np. jednej sceny lub elementu), zamiast ponownego renderowania całego projektu od początku. Umożliwi to szybszą iterację i poprawki.
+
+3.  **Częściowe renderowanie i edycja scen:**
+    *   **Edycja pojedynczej sceny:** Możliwość modyfikacji pojedynczej sceny w ramach istniejącego projektu i ponownego wyrenderowania tylko tej konkretnej sceny, bez konieczności ponownego renderowania wszystkich pozostałych.
+    *   **Zarządzanie zależnościami:** System powinien być w stanie efektywnie zarządzać zależnościami między scenami i elementami, aby renderować tylko niezbędne fragmenty.
 
 ### Brakujące/Do dalszej implementacji funkcjonalności (ogólne):
 
