@@ -1,0 +1,109 @@
+{
+  "width": 4096,
+  "height": 2160,
+  "fps": 60,
+  "scenes": [
+    {
+      "iterate": "",
+      "background_color": "#000000",
+      "duration": 500.0,
+      "id": "j2vscene_e528f3",
+      "comment": "",
+      "condition": "",
+      "variables": {},
+      "cache": true,
+      "elements": [
+        {
+          "text": "DEMO 001 - SCENE 1",
+          "style": "001",
+          "width": -1,
+          "height": -1,
+          "position": "custom",
+          "type": "text",
+          "id": "text_f2e823",
+          "comment": "",
+          "condition": "",
+          "variables": {},
+          "start": 0.0,
+          "duration": -2.0,
+          "extra_time": 0.0,
+          "z_index": 0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "mask": "",
+          "chroma_key": {
+            "color": "",
+            "tolerance": 25
+          },
+          "flip_horizontal": false,
+          "flip_vertical": false,
+          "zoom": 0,
+          "pan": "left",
+          "pan_crop": true,
+          "pan_distance": 0.1,
+          "cache": true,
+          "settings": {
+            "font-size": "80",
+            "font-color": "white"
+          },
+          "x": 0,
+          "y": 0,
+          "rotate": 0.0
+        }
+      ]
+    },
+    {
+      "iterate": "",
+      "background_color": "#000000",
+      "duration": 500.0,
+      "id": "j2vscene_26be2d",
+      "comment": "",
+      "condition": "",
+      "variables": {},
+      "cache": true,
+      "elements": [
+        {
+          "text": "DEMO 001 - SCENE 2",
+          "style": "001",
+          "width": -1,
+          "height": -1,
+          "position": "custom",
+          "type": "text",
+          "id": "text_aea327",
+          "comment": "",
+          "condition": "",
+          "variables": {},
+          "start": 0.0,
+          "duration": -2.0,
+          "extra_time": 0.0,
+          "z_index": 0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "mask": "",
+          "chroma_key": {
+            "color": "",
+            "tolerance": 25
+          },
+          "flip_horizontal": false,
+          "flip_vertical": false,
+          "zoom": 0,
+          "pan": "left",
+          "pan_crop": true,
+          "pan_distance": 0.1,
+          "cache": true,
+          "settings": {
+            "font-size": "80",
+            "font-color": "white"
+          },
+          "x": 0,
+          "y": 0,
+          "rotate": 0.0
+        }
+      ]
+    }
+  ],
+  "resolution": "",
+  "quality": "high",
+  "draft": false,
+  "variables": {}
+}

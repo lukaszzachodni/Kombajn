@@ -1,9 +1,16 @@
 import json
 import re
 import subprocess
+import os
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 import numpy as np
+
+# Force MoviePy to use the system ffmpeg which we know has NVENC support
+os.environ["IMAGEIO_FFMPEG_EXE"] = "/usr/bin/ffmpeg"
+from moviepy.config import change_settings
+change_settings({"FFMPEG_BINARY": "/usr/bin/ffmpeg"})
+
 from moviepy.editor import ColorClip, VideoClip, concatenate_videoclips, VideoFileClip, CompositeAudioClip
 
 from .j2v_types import J2VMovie, J2VScene
@@ -27,29 +34,32 @@ class J2VMovieRenderer:
         self.video_codec = self._detect_codec()
 
     def _detect_codec(self) -> str:
-        # Sprawdzamy czy ffmpeg jest dostępny
-        try:
-            subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            print("CRITICAL: ffmpeg not found in PATH! Falling back to libx264.")
-            return "libx264"
-
-        # Lista priorytetowa enkoderów
-        encoders = ["hevc_nvenc", "h264_nvenc"]
+        # Priority list of encoders
+        encoders = ["h264_nvenc", "hevc_nvenc"]
+        
+        # We need a small test file path
+        test_file = self.temp_dir / f"gpu_test_{os.getpid()}.mp4"
         
         for enc in encoders:
             try:
-                # Testujemy enkoder na pustym wejściu
+                # Rigorous test: actually try to encode a tiny blank video
+                # This ensures both ffmpeg supports the encoder AND the driver is working
                 test_cmd = [
-                    "ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
-                    "-c:v", enc, "-f", "null", "-"
+                    "/usr/bin/ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
+                    "-c:v", enc, str(test_file)
                 ]
-                res = subprocess.run(test_cmd, capture_output=True, text=True)
-                if res.returncode == 0:
-                    print(f"DEBUG: GPU Acceleration ({enc}) verified.")
+                res = subprocess.run(test_cmd, capture_output=True, text=True, timeout=10)
+                if res.returncode == 0 and test_file.exists():
+                    print(f"DEBUG: GPU Acceleration ({enc}) verified and working in process {os.getpid()}.")
+                    test_file.unlink()
                     return enc
-            except Exception:
+                else:
+                    print(f"DEBUG: GPU test for {enc} failed with code {res.returncode}. Stderr: {res.stderr}")
+            except Exception as e:
+                print(f"DEBUG: GPU test for {enc} failed with error: {e}")
                 continue
+            finally:
+                if test_file.exists(): test_file.unlink()
 
         print("DEBUG: GPU Acceleration not working or not available. Using software encoding (libx264).")
         return "libx264"

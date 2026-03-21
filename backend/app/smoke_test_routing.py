@@ -1,14 +1,16 @@
 import sys
-from backend.app.tasks import ping, render_scene
+import os
+import time
+from backend.app.tasks import ping, orchestrate_video_render
 from backend.app.celery_app import celery_app
 
 def run_routing_test():
-    print("\n--- Kombajn Routing Self-Evaluation ---")
+    print("\n--- Kombajn Atomic Routing Self-Evaluation ---")
     
     errors = []
     
     # 1. Test IO Worker Routing
-    print("Testing IO Worker (q_io)...")
+    print("Testing IO Worker (q_io) with ping...")
     res_ping = ping.apply_async()
     try:
         ping_val = res_ping.get(timeout=15)
@@ -20,34 +22,64 @@ def run_routing_test():
     except Exception as e:
         errors.append(f"FAILED: 'ping' task did not complete: {e}")
 
-    # Testing Editor Worker (q_cpu_edit)
-    print("\nTesting Editor Worker (q_cpu_edit)...")
-    valid_scene = {
-        "background": {"type": "color", "color": [0, 0, 0], "duration": 0.5},
-        "elements": []
+    # 2. Testing Orchestration (Atomic Flow)
+    print("\nTesting Orchestration & Parallel Rendering (Fan-Out)...")
+    
+    minimal_manifest = {
+        "width": 640,
+        "height": 480,
+        "fps": 24,
+        "scenes": [
+            {
+                "comment": "Scene 1",
+                "background_color": "#FF0000",
+                "duration": 0.5,
+                "elements": [{"type": "text", "text": "Scene 1", "duration": 0.5}]
+            },
+            {
+                "comment": "Scene 2",
+                "background_color": "#0000FF",
+                "duration": 0.5,
+                "elements": [{"type": "text", "text": "Scene 2", "duration": 0.5}]
+            }
+        ]
     }
-    res_render = render_scene.apply_async(args=["smoke_test", valid_scene, 640, 480, 24, 1])
+    
+    # Send orchestration task (Stage 2)
+    # This task itself should ideally run on q_io or q_default
+    res_orch = orchestrate_video_render.apply_async(args=[minimal_manifest])
+    print(f"Orchestration Task ID: {res_orch.id}")
+    
     try:
-        render_val = res_render.get(timeout=30)
-        worker = render_val.get('worker', 'unknown')
-        if 'worker_editor' in worker:
-            print(f"✅ SUCCESS: 'render_scene' handled by expected worker: {worker}")
-        else:
-            errors.append(f"WRONG WORKER: 'render_scene' was handled by '{worker}', but expected 'worker_editor'")
+        orch_val = res_orch.get(timeout=10)
+        chord_id = orch_val.get('task_id')
+        print(f"✅ SUCCESS: Orchestration complete. Chord ID: {chord_id}")
+        
+        # Now wait for the whole chord (Final Assembly)
+        # We need to wait for the assembly task result
+        print("Waiting for Parallel Scene Rendering and Final Assembly...")
+        from celery.result import AsyncResult
+        res_final = AsyncResult(chord_id)
+        
+        # This will block until the assemble_video_task completes
+        final_val = res_final.get(timeout=60)
+        
+        print(f"✅ SUCCESS: Full Atomic Render completed!")
+        print(f"Output path: {final_val.get('output_path')}")
+        
     except Exception as e:
-        errors.append(f"FAILED: 'render_scene' task did not complete: {e}")
+        print(f"❌ ATOMIC FLOW FAILED: {e}")
+        errors.append(f"Atomic Render Error: {e}")
 
     # Final Evaluation
     print("\n--- Final Report ---")
     if not errors:
-        print("🚀 ALL SYSTEMS GO: Routing is perfectly configured.")
-        print("Specialist workers are correctly picking up their designated tasks.")
+        print("🚀 ALL SYSTEMS GO: Atomic Routing and Rendering are perfectly configured.")
         sys.exit(0)
     else:
-        print("❌ ROUTING ERROR: Issues detected in task distribution:")
+        print("⚠️ ARCHITECTURAL ERRORS DETECTED:")
         for err in errors:
             print(f"   - {err}")
-        print("\nPlease check your KombajnRouter and Docker worker configurations.")
         sys.exit(1)
 
 if __name__ == "__main__":
