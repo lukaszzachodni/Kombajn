@@ -75,10 +75,7 @@ class J2VTextProcessor:
             h_align_setting = settings.get("horizontal-position", "center") # e.g., 'left', 'center', 'right'
             
             # Calculate the top-left corner of the final clip within the parent canvas
-            # This logic positions the final_clip (text or composite) within the element's defined canvas area (element_x, element_y, element_width_canvas, element_height_canvas)
-            
-            clip_final_x = element_x
-            clip_final_y = element_y
+            clip_final_x, clip_final_y = element_x, element_y
             
             # Adjust clip's final X position based on horizontal alignment and canvas width
             if h_align_setting == "left":
