@@ -1,22 +1,28 @@
 from typing import Optional, Literal, Union
 from pydantic import Field
-from .base import J2VElement
+from .base import J2VElement, HInt, HFloat, HBool
 from .settings import RotateSettings, CropSettings, CorrectionSettings
 
 class VideoElement(J2VElement):
     type: Literal["video"] = "video"
     src: str = Field(..., description="URL to video file")
     connection: Optional[str] = None
-    width: int = -1
-    height: int = -1
-    x: int = 0
-    y: int = 0
+    
+    # Hybrid fields for templates
+    width: HInt = Field(-1, description="Video width")
+    height: HInt = Field(-1, description="Video height")
+    x: HInt = Field(0, description="X coordinate")
+    y: HInt = Field(0, description="Y coordinate")
+    
     position: str = "custom"
-    resize: Optional[Literal["cover", "fill", "fit", "contain"]] = None
-    rotate: Optional[Union[float, RotateSettings]] = None
+    resize: Optional[Union[Literal["cover", "fill", "fit", "contain"], str]] = None
+    rotate: Optional[Union[HFloat, RotateSettings]] = None
     crop: Optional[CropSettings] = None
-    volume: float = 1.0
-    muted: bool = False
-    loop: int = 1
-    seek: float = 0.0
+    
+    # Audio settings (Hybrid)
+    volume: HFloat = 1.0
+    muted: HBool = False
+    loop: HInt = 1
+    seek: HFloat = 0.0
+    
     correction: Optional[CorrectionSettings] = None
