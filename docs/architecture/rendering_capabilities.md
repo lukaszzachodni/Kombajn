@@ -32,10 +32,10 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 
 1.  **TextElement - Zaawansowane funkcje:** Obsługa `style` dla animacji tekstu, `outline`, `shadow`, pełne mapowanie `text-align`.
 2.  **ImageElement - Zaawansowane funkcje:** Implementacja generowania obrazów AI, pełna implementacja `zoom`/`pan`, `chroma-key`.
-3.  **Biblioteka komponentów animowanych:** Brak integracji i wykorzystania `ComponentElement`.
+3.  **Biblioteka komponentów animowanych:** `ComponentElement` jest zdefiniowany, ale jego integracja i wykorzystanie biblioteki komponentów wymaga dalszej pracy.
 4.  **Zaawansowane funkcje AI:** Synteza głosu, analiza wizualna.
-5.  **Pełne wykorzystanie akceleracji GPU (Fast-Path FFmpeg/CUDA Rendering):** W fazie planowania.
-6.  **Złożone wyrażenia i logika warunkowa:** Wymaga doprecyzowania ewaluacji.
-7.  **Obsługa błędów i walidacja:** Dalsze wzmocnienie mechanizmów.
+5.  **Pełne wykorzystanie akceleracji GPU (Fast-Path FFmpeg/CUDA Rendering):** Obecnie GPU jest używane głównie do kodowania. Dalszy rozwój obejmuje wykorzystanie GPU do kluczowych operacji renderowania (skalowanie, kompozycja).
+6.  **Złożone wyrażenia i logika warunkowa:** Pełna ewaluacja złożonych wyrażeń w czasie renderowania wymaga doprecyzowania.
+7.  **Obsługa błędów i walidacja:** Dalsze wzmocnienie mechanizmów obsługi błędów, zwłaszcza przy interakcji z zewnętrznymi zasobami i API.
 
 Aplikacja jest teraz lepiej przygotowana do renderowania dynamicznych wideo z ulepszoną obsługą tekstu i obrazów, a jej możliwości (w tym stan `AudioElement`) zostały udokumentowane. Nadal jednak wiele funkcji opisanych w dokumentacji pozostaje do zaimplementowania.
