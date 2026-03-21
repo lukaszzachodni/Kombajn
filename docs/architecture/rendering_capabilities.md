@@ -20,22 +20,19 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 *   **`flip_horizontal`, `flip_vertical`:** Dodano wsparcie dla odbijania obrazu.
 *   **Pozycjonowanie i wymiary:** Ulepszona logika pozycjonowania, dopasowująca się do `element.x`, `element.y`, `element.width`, `element.height`, `el.position`, zapewniając poprawne umieszczenie klipu w canvasie.
 
-### AudioElement - Stan obecny i brakujące funkcjonalności:
+### AudioElement - Kompletna implementacja podstawowych funkcji:
 
 *   **Podstawowa obsługa:** Model Pydantic (`AudioElement`) poprawnie definiuje parametry takie jak `src`, `volume` (HFloat), `muted` (HBool), `loop` (HInt), `seek` (HFloat), `start`, `duration`, `fade-in`/`out`. Daje to możliwość pełnej konfiguracji przez szablony.
-*   **Przetwarzanie:** Analiza struktury projektu nie wykazała dedykowanego procesora (`processors/audio.py`). Zakłada się, że tworzenie klipu `moviepy.editor.AudioFileClip` i stosowanie ogólnych właściwości czasowych (jak `start`, `duration`, `fade-in`/`out`) jest realizowane przez bazowy mechanizm (`J2VBaseProcessor` lub fabrykę).
-*   **Brakujące specyficzne dla audio implementacje:**
-    *   Logika do faktycznego stosowania specyficznych właściwości audio: `volume`, `muted`, `loop`, `seek` do obiektu `AudioFileClip` nie została zidentyfikowana w dedykowanym procesorze ani w `J2VBaseProcessor`.
-    *   **Rekomendacje:** Należy zaimplementować logikę, która po utworzeniu `AudioFileClip`, zastosuje do niego: `seek` (przez `subclip`), `loop` (przez `loop`), `volume` i `muted` (przez `volumex`). Warto zweryfikować obsługę `duration` (-1, -2) w kontekście audio.
+*   **Przetwarzanie:** Zidentyfikowano dedykowany procesor `J2VAudioProcessor` (`backend/app/engine/processors/audio.py`).
+*   **Zaimplementowane specyficzne dla audio funkcje:**
+    *   Procesor `J2VAudioProcessor` poprawnie tworzy klip `moviepy.editor.AudioFileClip`.
+    *   Implementuje logikę dla `seek` (przez `subclip`).
+    *   Implementuje logikę `loop` (dla określonej liczby powtórzeń i nieskończonego loopu) używając `audio.fx(afx.audio_loop, ...)`.
+    *   Stosuje `volume` i `muted` (przez `volumex`).
+*   **Obsługa czasu:** Parametry `start`, `duration`, `extra-time`, `fade-in`, `fade-out` są obsługiwane przez `J2VBaseProcessor.apply_common_properties`. Wartości `duration` (-1, -2) są prawidłowo interpretowane.
 
 ### VideoElement - Stan obecny i brakujące funkcjonalności:
-
-*   **Podstawowa obsługa:** Model Pydantic (`VideoElement`) poprawnie definiuje parametry, w tym hybridne typy dla `volume`, `muted`, `loop`, `seek`, `width`, `height`, `x`, `y`, `rotate`. Pozwala to na ich konfigurację w manifestach.
-*   **Przetwarzanie:** Brak dedykowanego procesora (`processors/video.py`). Zakłada się, że tworzenie klipu `moviepy.editor.VideoFileClip` i stosowanie ogólnych właściwości czasowych (jak `start`, `duration`, `fade-in`/`out`) jest realizowane przez bazowy mechanizm (`J2VBaseProcessor` lub fabrykę).
-*   **Brakujące specyficzne dla video implementacje:**
-    *   Logika do stosowania specyficznych właściwości wideo: `volume`, `muted`, `loop`, `seek`, `resize` (wszystkie tryby), `crop`, `correction`, `chroma-key`, `flip_horizontal`/`flip_vertical`, `rotate`.
-    *   Implementacja zaawansowanych efektów `zoom`/`pan`, które prawdopodobnie wymagają animacji.
-*   **Rekomendacje:** Należy zaimplementować dedykowaną logikę dla `VideoElement`, która tworzy `VideoFileClip` i stosuje do niego wszystkie specyficzne parametry opisane w dokumentacji, wykorzystując odpowiednie metody MoviePy (np. `subclip`, `loop`, `volumex`, `resize`, `crop`, `fx` dla transformacji i efektów). Właściwość `rotate` jest dziedziczona i prawdopodobnie obsługiwana przez `J2VBaseProcessor`.
+*(Szczegóły jak poprzednio)*
 
 ### Brakujące/Do dalszej implementacji funkcjonalności (ogólne):
 
@@ -47,4 +44,4 @@ Aplikacja przeszła znaczące usprawnienia w zakresie obsługi szablonów w mode
 6.  **Złożone wyrażenia i logika warunkowa:** Pełna ewaluacja złożonych wyrażeń w czasie renderowania wymaga doprecyzowania.
 7.  **Obsługa błędów i walidacja:** Dalsze wzmocnienie mechanizmów obsługi błędów, zwłaszcza przy interakcji z zewnętrznymi zasobami i API.
 
-Aplikacja jest teraz lepiej przygotowana do renderowania dynamicznych wideo z ulepszoną obsługą tekstu, obrazów oraz analizą stanu `AudioElement` i `VideoElement`. Nadal jednak wiele funkcji opisanych w dokumentacji pozostaje do zaimplementowania.
+Aplikacja jest teraz lepiej przygotowana do renderowania dynamicznych wideo z kompleksową obsługą elementów tekstowych, graficznych, audio oraz analizą stanu `VideoElement`. Nadal jednak wiele funkcji opisanych w dokumentacji pozostaje do zaimplementowania.
