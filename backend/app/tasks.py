@@ -98,7 +98,8 @@ def render_scene_task(self, render_id: str, scene_index: int, scene_dict: dict, 
         "render_id": render_id,
         "scene_index": scene_index,
         "rendered_paths": paths,
-        "worker": self.request.hostname
+        "worker": self.request.hostname,
+        "video_codec": renderer.video_codec
     }
 
 @celery_app.task(name="kombajn.tasks.assemble_video", bind=True)
@@ -140,7 +141,8 @@ def assemble_video_task(self, results: List[dict], render_id: str, output_path: 
         return {
             "status": "completed",
             "output_path": output_path,
-            "render_id": render_id
+            "render_id": render_id,
+            "video_codec": dummy_renderer.video_codec
         }
 
     except Exception as e:

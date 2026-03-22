@@ -207,7 +207,7 @@ class J2VMovieRenderer:
             try:
                 final_visual.write_videofile(str(output_path), fps=self.movie.fps, codec=self.video_codec, audio_codec="aac", logger=None)
                 rendered_paths.append(str(output_path))
-                print(f"DEBUG: Successfully rendered {output_path}")
+                print(f"DEBUG: Successfully rendered {output_path} using {self.video_codec}")
             finally:
                 final_visual.close()
                 for c in visual_clips: 
