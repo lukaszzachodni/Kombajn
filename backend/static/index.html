@@ -39,21 +39,28 @@
                   <div class="fw-semibold">Health · Full Path</div>
                   <div class="small">API, Storage (SSD), and Celery + Redis queues.</div>
                 </a>
-                <a href="http://localhost:8501" target="_blank" class="btn btn-outline-light w-100">
+                <a id="j2v-studio-link" href="#" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">🎬 J2V Studio</div>
                   <div class="small">Control panel for launching scenarios and rendering.</div>
                 </a>
-                <a href="http://localhost:5555" target="_blank" class="btn btn-outline-light w-100">
+                <a id="flower-link" href="#" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">📊 Flower (Tasks)</div>
                   <div class="small">Real-time monitoring of Celery tasks and workers.</div>
                 </a>
-                <a href="http://localhost:8081" target="_blank" class="btn btn-outline-light w-100">
+                <a id="redis-link" href="#" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">💾 Redis (Data)</div>
                   <div class="small">Redis Commander data browser.</div>
                 </a>
               </div>
             </div>
           </section>
+
+          <script>
+            const host = window.location.hostname;
+            document.getElementById('j2v-studio-link').href = `http://${host}:8501`;
+            document.getElementById('flower-link').href = `http://${host}:5555`;
+            document.getElementById('redis-link').href = `http://${host}:8081`;
+          </script>
 
           <aside class="col-12 col-lg-5">
             <div class="card bg-dark border-secondary-subtle">

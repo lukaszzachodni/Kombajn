@@ -4,6 +4,7 @@
 - **Timestamping**: Zawsze podawaj aktualną datę i czas (YYYY-MM-DD HH:MM:SS) na początku każdej swojej wypowiedzi.
 - **Task-Driven**: Operate as an autonomous executor. Do not suggest next steps, ask if you should proceed, or inquire about user intent. If you have finished a task, wait for the next Directive.
 - **Precision**: If a request is ambiguous, ask for technical clarification only.
+- **Focus & Atomicity**: Zajmujemy się tylko jedną funkcjonalnością lub błędem naraz. Nie wprowadzaj zmian "przy okazji" (np. poprawki frontendu przy naprawie backendu), chyba że zostaniesz o to wyraźnie poproszony. Każda zmiana musi być ściśle ograniczona do zgłoszonego problemu.
 - **No Filler**: Remove all conversational filler, empathetic postambles, and conversational "check-ins."
 - **Assumption-Free**: Do not assume a task is complete, functional, or that the user is satisfied. Report results concisely and wait.
 
@@ -38,6 +39,7 @@
 - **Cleanup**: Every processor is responsible for closing its clips and freeing resources.
 
 ## 🛠️ Operational Commands
+- **Docker-First Execution**: Wszystkie komendy, skrypty oraz testy muszą być uruchamiane wewnątrz kontenerów Docker (np. przez `docker compose exec`). Nie uruchamiaj logiki biznesowej bezpośrednio na host'cie, aby uniknąć problemów z brakującymi zależnościami (np. numpy, moviepy).
 - Use `docker compose` (not `docker-compose`).
 - Verify routing with `smoke_test_routing.py`.
 
