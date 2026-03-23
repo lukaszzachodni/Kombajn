@@ -1,0 +1,114 @@
+x-worker-base: &worker-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment:
+    - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
+    - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
+    - KOMBAJN_DRY_RUN=false
+    - PYTHONPATH=.
+  volumes:
+    - .:/app
+    - ./data/ssd:/data/ssd
+    - ./data/usb:/data/usb
+    - ./data/hdd:/data/hdd
+    - ./data/projects:/data/projects
+    - ./data/assets:/data/assets
+  depends_on:
+    redis:
+      condition: service_healthy
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kombajn_api
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
+      - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
+      - PYTHONPATH=.
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  scenario_ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kombajn_scenario_ui
+    command: streamlit run backend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - "8501:8501"
+    environment:
+      - KOMBAJN_API_BASE=http://api:8000
+      - PYTHONPATH=.
+    depends_on:
+      - api
+
+  worker_io:
+    <<: *worker-base
+    container_name: kombajn_worker_io
+    command: celery -A backend.app.celery_app.celery_app worker -n worker_io -Q q_io,q_default -l info --concurrency=4 -E
+
+  worker_editor:
+    <<: *worker-base
+    container_name: kombajn_worker_editor
+    command: celery -A backend.app.celery_app.celery_app worker -n worker_editor -Q q_cpu_edit -l info --concurrency=1 --prefetch-multiplier=1 -E
+
+  flower:
+    <<: *worker-base
+    container_name: kombajn_flower
+    restart: always
+    command: >
+      celery
+      --app=backend.app.celery_app.celery_app
+      flower
+      --port=5555
+      --inspect-timeout=3000
+    ports:
+      - "5555:5555"
+    environment:
+      - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
+      - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - PYTHONPATH=.
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    container_name: kombajn_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: kombajn_redis_commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:
