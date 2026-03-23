@@ -1,25 +1,16 @@
 import json
 import re
 import subprocess
-import os
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 import numpy as np
-
-# Force MoviePy to use the system ffmpeg which we know has NVENC support
-os.environ["IMAGEIO_FFMPEG_EXE"] = "/usr/bin/ffmpeg"
-from moviepy.config import change_settings
-change_settings({"FFMPEG_BINARY": "/usr/bin/ffmpeg"})
-
 from moviepy.editor import ColorClip, VideoClip, concatenate_videoclips, VideoFileClip, CompositeAudioClip
 
 from .j2v_types import J2VMovie, J2VScene
 from .j2v_factory import J2VProcessorFactory
+from .utils import get_scene_hash
 
 class J2VMovieRenderer:
-    # Class-level cache for the detected codec
-    _cached_codec: Optional[str] = None
-
     RESOLUTION_MAP = {
         "full-hd": (1920, 1080),
         "shorts": (1080, 1920),
@@ -32,46 +23,30 @@ class J2VMovieRenderer:
         self.movie_vars = manifest_dict.get("variables", {})
         self.movie = J2VMovie(**manifest_dict)
         self._resolve_resolution()
-        self.temp_dir = temp_dir or (Path("/data/ssd/temp") / "j2v_local")
+        self.temp_dir = temp_dir if temp_dir else Path("/data/ssd/temp") / "j2v_local"
         self.temp_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Use cached codec if available, otherwise detect
-        if J2VMovieRenderer._cached_codec is None:
-            J2VMovieRenderer._cached_codec = self._detect_codec()
-        self.video_codec = J2VMovieRenderer._cached_codec
+        self.video_codec = self._detect_codec()
 
     def _detect_codec(self) -> str:
-        # Check for explicit manual override to simulate "No GPU" environment
-        if os.environ.get("KOMBAJN_FORCE_CPU", "false").lower() == "true":
-            print("DEBUG: GPU Override active via environment variable. Forcing software encoding (libx264).")
+        try:
+            subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("CRITICAL: ffmpeg not found in PATH! Falling back to libx264.")
             return "libx264"
 
-        # Priority list of encoders
-        encoders = ["h264_nvenc", "hevc_nvenc"]
-        
-        # We need a small test file path
-        test_file = self.temp_dir / f"gpu_test_{os.getpid()}.mp4"
-        
+        encoders = ["hevc_nvenc", "h264_nvenc"]
         for enc in encoders:
             try:
-                # Rigorous test: actually try to encode a tiny blank video
-                # This ensures both ffmpeg supports the encoder AND the driver is working
                 test_cmd = [
-                    "/usr/bin/ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
-                    "-c:v", enc, str(test_file)
+                    "ffmpeg", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=0.1",
+                    "-c:v", enc, "-f", "null", "-"
                 ]
-                res = subprocess.run(test_cmd, capture_output=True, text=True, timeout=10)
-                if res.returncode == 0 and test_file.exists():
-                    print(f"DEBUG: GPU Acceleration ({enc}) verified and working in process {os.getpid()}.")
-                    test_file.unlink()
+                res = subprocess.run(test_cmd, capture_output=True, text=True)
+                if res.returncode == 0:
+                    print(f"DEBUG: GPU Acceleration ({enc}) verified.")
                     return enc
-                else:
-                    print(f"DEBUG: GPU test for {enc} failed with code {res.returncode}. Stderr: {res.stderr}")
-            except Exception as e:
-                print(f"DEBUG: GPU test for {enc} failed with error: {e}")
+            except Exception:
                 continue
-            finally:
-                if test_file.exists(): test_file.unlink()
 
         print("DEBUG: GPU Acceleration not working or not available. Using software encoding (libx264).")
         return "libx264"
@@ -119,6 +94,7 @@ class J2VMovieRenderer:
         else: return self._evaluate_expression(data, context_vars)
 
     def render_scene(self, scene_dict: Dict[str, Any], index: int, global_vars: Dict[str, Any]) -> List[str]:
+        from .utils import get_scene_hash
         print(f"DEBUG: Processing scene {index}...")
         iterate_key = scene_dict.get("iterate")
         items_to_iterate = []
@@ -136,8 +112,19 @@ class J2VMovieRenderer:
                 continue
             
             s_data = self._process_variables(s_dict, context_vars)
+            
+            # Hash-based caching
+            scene_hash = get_scene_hash(s_data)
+            cache_dir = Path("/data/ssd/cache")
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            output_path = cache_dir / f"{scene_hash}.mp4"
+            
+            if output_path.exists():
+                print(f"DEBUG: Cache hit! Scene {scene_hash} exists, skipping render.")
+                rendered_paths.append(str(output_path))
+                continue
+
             scene = J2VScene(**s_data)
-            output_path = self.temp_dir / f"scene_{index}_{i:03d}.mp4"
             bg_duration = scene.duration if scene.duration > 0 else 5.0
             
             visual_clips = []
