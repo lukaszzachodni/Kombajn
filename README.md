@@ -21,8 +21,21 @@ Modular video production engine based on Pydantic v2 schemas and MoviePy. Design
 - **Studio (Composer)**: `:8501` (Streamlit Studio)
 - **Monitoring**: `:5555` (Flower) / `:8081` (Redis Commander)
 
-## Quick Start
+## Quick Start & Deployment
+
+### Hardware Agnostic Setup
+Kombajn AI supports both CPU (any machine) and NVIDIA GPU (Xubuntu with NVIDIA drivers) rendering.
+
+#### 1. For CPU-only rendering (Windows/Intel or Cloud)
+Use the CPU-optimized configuration:
 ```bash
-docker compose up -d --build
+docker compose -f docker-compose.cpu.yml up -d --build
 ```
-Access the dashboard at `http://localhost:8000`.
+
+#### 2. For NVIDIA GPU rendering (Xubuntu)
+Ensure [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) is installed on your host, then run:
+```bash
+docker compose -f docker-compose.gpu.yml up -d --build
+```
+
+*Note: The GPU-optimized configuration will fall back to CPU rendering if it fails to find an available NVIDIA driver/adapter.*
