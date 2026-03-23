@@ -27,9 +27,6 @@ ENV KOMBAJN_STORAGE__SSD_ROOT=/data/ssd \
     KOMBAJN_STORAGE__HDD_ROOT=/data/hdd \
     PYTHONPATH=.
 
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
 EXPOSE 8000 8501 5555 8081
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
