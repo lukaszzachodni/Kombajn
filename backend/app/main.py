@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from .api import health, render_task, list_tasks
+from .api import health, render_task, list_tasks, color_book
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +30,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.include_router(health.router)
 app.include_router(render_task.router, prefix="/tasks")
 app.include_router(list_tasks.router, prefix="/tasks")
+app.include_router(color_book.router)
 
 @app.get("/", response_class=HTMLResponse)
 def landing() -> HTMLResponse:

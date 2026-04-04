@@ -21,6 +21,8 @@ x-worker-base: &worker-base
     - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
     - KOMBAJN_DRY_RUN=false
     - PYTHONPATH=.
+  env_file:
+    - .env
   depends_on:
     redis:
       condition: service_healthy
@@ -40,6 +42,8 @@ services:
       - KOMBAJN_REDIS_BROKER_URL=redis://redis:6379/0
       - KOMBAJN_REDIS_RESULT_BACKEND=redis://redis:6379/1
       - PYTHONPATH=.
+    env_file:
+      - .env
     depends_on:
       redis:
         condition: service_healthy
@@ -57,6 +61,8 @@ services:
     environment:
       - KOMBAJN_API_BASE=http://api:8000
       - PYTHONPATH=.
+    env_file:
+      - .env
     depends_on:
       - api
 

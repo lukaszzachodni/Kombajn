@@ -17,6 +17,7 @@
     - `backend/app/api/`: FastAPI modules.
     - `backend/app/engine/elements/`: Pydantic Data Structures.
     - `backend/app/engine/processors/`: MoviePy Logic.
+    - `backend/app/modules/color_book/`: External coloring book module (Generator & Binding).
 - **Hybrid Typing**: Use `HInt`, `HFloat`, `HBool` (Union[T, str]) in Pydantic models to support both values and `{{vars}}`.
 
 ## 🛡️ Resilience & Execution Rules

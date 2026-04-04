@@ -15,6 +15,13 @@ Modular video production engine based on Pydantic v2 schemas and MoviePy. Design
 - `backend/app/engine/elements/`: Pydantic models for montage elements.
 - `backend/app/engine/processors/`: MoviePy logic per element type.
 - `backend/app/api/`: Modular FastAPI endpoints.
+- `backend/app/modules/color_book/`: External coloring book generator & binding logic.
+
+## Color Book Module
+This module handles coloring book idea generation, image generation, and PDF binding.
+- **Idea Generation**: `POST /color-book/idea` - Generates project structure from a theme.
+- **Generator**: `backend/app/modules/color_book/generator/`
+- **Binding**: `backend/app/modules/color_book/binding/` (PDF & Excel generation)
 
 ## Operational Stack
 - **API**: `:8000` (FastAPI + Swagger docs)
