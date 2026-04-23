@@ -21,7 +21,7 @@
 - **Hybrid Typing**: Use `HInt`, `HFloat`, `HBool` (Union[T, str]) in Pydantic models to support both values and `{{vars}}`.
 
 ## 🛡️ Resilience & Execution Rules
-- **Docker-First**: Wszystkie komendy/testy (numpy, moviepy, ffmpeg) MUSZĄ być uruchamiane przez `docker compose exec -T api ...`.
+- **Docker-First**: Wszystkie komendy/testy (numpy, moviepy, ffmpeg) MUSZĄ być uruchamiane przez `docker compose -f docker-compose.cpu.yml exec -T api ...` (lub odpowiednio `.gpu.yml`).
 - **Atomicity of Work**: Rendering a single scene is an atomic unit. Large renders must be split.
 - **Stateless Checkpoints**: Temp files are checkpoints. Support "hot-retry" from missing scenes.
 - **Cleanup**: Every processor is responsible for closing clips and freeing memory.
