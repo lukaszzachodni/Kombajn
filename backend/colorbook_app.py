@@ -55,14 +55,49 @@ with tabs[1]:
                         details = data.get("coloringBook", {}).get("mainProjectDetails", {})
                         st.json(details)
                         
+                        st.subheader("Cover Generation")
+                        c_col1, c_col2 = st.columns(2)
+                        with c_col1:
+                            c_type = st.selectbox("Type", ["full_text", "blank_title", "no_text"], key="c_type")
+                        with c_col2:
+                            c_lang = st.selectbox("Lang", list(data.get("coloringBook", {}).get("languageVersions", {}).keys()), key="c_lang")
+                        
+                        if st.button("Regenerate Cover"):
+                            try:
+                                reg_resp = requests.post(
+                                    f"{api_base}/color-book/regenerate-cover", 
+                                    params={"project_id": selected_project, "cover_type": c_type, "lang_code": c_lang}
+                                )
+                                if reg_resp.status_code == 200:
+                                    st.success(f"Cover regeneration started: {reg_resp.json().get('task_id')}")
+                                else:
+                                    st.error(f"Failed: {reg_resp.text}")
+                            except Exception as e:
+                                st.error(f"Error: {e}")
+
                         st.subheader("Page Prompts")
                         prompts = data.get("coloringBook", {}).get("pagePromptLibrary", [])
                         for p in prompts:
                             with st.expander(f"Page {p['promptId']}"):
                                 st.write(p["sceneDescription"])
-                                if st.button(f"Regenerate Page {p['promptId']}", key=f"reg_{p['promptId']}"):
-                                    # Tu logika wysłania regenu
-                                    st.info("Regeneration started...")
+                                # Wyciągamy numer strony z promptId (np. celestial_001 -> 1)
+                                try:
+                                    p_num = int(p['promptId'].split('_')[-1])
+                                except:
+                                    p_num = 1
+                                    
+                                if st.button(f"Regenerate Page {p_num}", key=f"reg_{p['promptId']}"):
+                                    try:
+                                        reg_resp = requests.post(
+                                            f"{api_base}/color-book/regenerate-page", 
+                                            params={"project_id": selected_project, "page_number": p_num}
+                                        )
+                                        if reg_resp.status_code == 200:
+                                            st.success(f"Regeneration task started: {reg_resp.json().get('task_id')}")
+                                        else:
+                                            st.error(f"Failed to start regeneration: {reg_resp.text}")
+                                    except Exception as e:
+                                        st.error(f"Error: {e}")
 
                     with col2:
                         st.subheader("Files")

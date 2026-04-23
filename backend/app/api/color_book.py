@@ -75,3 +75,19 @@ async def regenerate_page(project_id: str, page_number: int, preferences: AIPref
         args=[page_data, project_data, preferences.model_dump()]
     )
     return {"task_id": task.id}
+
+@router.post("/regenerate-cover")
+async def regenerate_cover(project_id: str, cover_type: str = "full_text", lang_code: Optional[str] = "en", preferences: AIPreferences = AIPreferences()):
+    """Uruchamia ponowne generowanie okładki."""
+    store = ColorBookProjectStore()
+    project_data = store.get_project_data(project_id)
+    if not project_data:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    # Zadanie Celery dla okładki (używamy generycznego zadania AI lub dedykowanego)
+    # Na razie uproszczone wywołanie podobne do orchestrate ale tylko dla okładki
+    task = celery_app.send_task(
+        "color_book.generate_cover", # Muszę upewnić się że to zadanie istnieje w tasks/color_book.py
+        args=[project_data, cover_type, lang_code, preferences.model_dump()]
+    )
+    return {"task_id": task.id}

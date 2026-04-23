@@ -42,6 +42,24 @@ def generate_color_book_page(page_data: Dict[str, Any], project_context: Dict[st
     # path = storage.save_image(images[0])
     return "path/to/page.png"
 
+@shared_task(name="color_book.generate_cover")
+def generate_color_book_cover(project_data: Dict[str, Any], cover_type: str, lang_code: str, preferences_dict: Dict[str, Any]) -> str:
+    """Generuje obraz okładki."""
+    from backend.app.schemas.common.ai_preferences import AIPreferences
+    preferences = AIPreferences(**preferences_dict)
+    
+    image_gen = AIServiceFactory.get_image_gen_provider(preferences)
+    
+    # Uproszczony prompt
+    title = project_data.get("coloringBook", {}).get("languageVersions", {}).get(lang_code, {}).get("uploaderData", {}).get("Title", "Coloring Book")
+    prompt = f"Book cover for '{title}'. Vibrant style."
+    
+    images = image_gen.generate_images(prompt, number_of_images=1, aspect_ratio="3:4")
+    if not images:
+        raise RuntimeError(f"Failed to generate cover for {lang_code}")
+        
+    return "path/to/cover.png"
+
 from backend.app.engine.color_book.manuscript_processor import ManuscriptProcessor
 from backend.app.engine.color_book.cover_processor import CoverProcessor
 from backend.app.engine.color_book.kdp_excel_processor import KDPExcelProcessor
