@@ -7,6 +7,11 @@ celery_app = Celery(
     "kombajn",
     broker=settings.redis_broker_url,
     backend=settings.redis_result_backend,
+    include=[
+        "backend.app.tasks.video",
+        "backend.app.tasks.color_book",
+        "backend.app.tasks.system"
+    ]
 )
 
 # Force event sending for Flower to track them
@@ -19,4 +24,4 @@ celery_app.conf.worker_enable_remote_control = True
 celery_app.conf.task_default_queue = 'q_default'
 celery_app.conf.task_routes = (KombajnRouter(),)
 
-celery_app.autodiscover_tasks(["backend.app"])
+# celery_app.autodiscover_tasks(["backend.app"])
