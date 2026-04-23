@@ -1,22 +1,31 @@
-# KOMBAJN AI – Desant: Color Book Generator (TODO)
-(Updated: 2026-04-04 14:45:00)
+# KOMBAJN AI – Development Roadmap & TODO
+(Updated: 2026-04-23 12:25:00)
 
-## 📦 1. Migration "Na Pałę"
-- [x] Create git branch `feature/colorbook-integration`.
-- [x] Copy source files from `color_book_generator` and `colorbook_binding`.
-- [x] Merge `requirements.txt`.
-- [ ] **Fix Imports**: Ensure internal relative imports work in `backend/app/modules/color_book/`.
+## ✅ 1. Infrastructure & Architecture Refactor (Done)
+- [x] **Universal AI Services**: Abstract providers for Gemini, Imagen, and Mock.
+- [x] **Domain Schemas**: Pydantic models with "one class per file" rule.
+- [x] **ColorBook Engine**: Object-oriented processors for PDF/Excel generation.
+- [x] **Modular Tasks**: Celery tasks split by domain (video, color_book, system).
+- [x] **Dual Docker Profiles**: CPU and GPU specific compose files synchronized.
 
-## 🚀 2. API Integration
-- [ ] **Create Module Router**: `backend/app/api/color_book.py`.
-- [ ] **Endpoint "Pomysł"**: Implement POST `/idea` to trigger generator logic.
-- [ ] **Endpoint "Binding"**: Implement POST `/bind` to trigger PDF generation.
-- [ ] **Global Router**: Register `color_book_router` in `backend/app/main.py`.
+## 🚀 2. AI Enhancements
+- [ ] **Local LLM Provider**: Implement Ollama/Llama integration in `AIServiceFactory`.
+- [ ] **Local ImageGen Provider**: Implement Stable Diffusion (ComfyUI API) integration.
+- [ ] **Video AI Integration**: Connect `ImageElement.prompt` to the new `ImageGenProvider`.
+- [ ] **Voice/TTS Refactor**: Move Voice generation to `backend/app/services/ai/providers/tts.py`.
 
-## 🛡️ 3. Docker & Runtime
-- [ ] **Verify ENV**: Ensure `.env` in `Kombajn/` includes Gemini/Google Cloud keys.
-- [ ] **Volumes**: Check if Docker needs access to `color_book/binding/assets` or `data`.
-- [ ] **Test Run**: Attempt to trigger generation via cURL from inside container.
+## 📚 3. ColorBook Studio (Next Steps)
+- [ ] **Task Monitoring UI**: Real-time progress tracking in Streamlit (using Celery AsyncResult).
+- [ ] **Project Gallery**: View generated manuscripts and covers directly in UI.
+- [ ] **Advanced Binding**: Add page numbering, copyright pages, and custom fonts selection.
+- [ ] **Line Extraction Preview**: Interactive threshold adjustment for `LineExtractionProcessor`.
 
-## 🎨 4. Front-end (Streamlit)
-- [ ] Add simple "Color Book" tab to the main dashboard for quick testing.
+## 🎬 4. Video Engine (J2V)
+- [ ] **GPU Fast-Path**: Implement FFmpeg/CUDA filters for scaling and composition.
+- [ ] **Interactive Preview**: Frame-by-frame preview in Streamlit using MoviePy/OpenCV.
+- [ ] **Component Library**: Implement animated components (transitions, lower thirds).
+
+## 🛡️ 5. Quality & Resilience
+- [ ] **E2E Testing**: Add full flow tests (API -> Worker -> SSD Output) for both domains.
+- [ ] **Cache Management**: Implement automatic cleanup for `/data/ssd/cache`.
+- [ ] **Pre-flight Checks**: Validate assets existence and text lengths before starting heavy renders.

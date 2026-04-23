@@ -36,3 +36,42 @@ async def start_orchestration(request: OrchestrateRequest):
         args=[request.idea, request.preferences.model_dump()]
     )
     return {"task_id": task.id}
+
+from backend.app.engine.color_book.project_store import ColorBookProjectStore
+
+@router.get("/projects")
+async def list_projects():
+    """Zwraca listę projektów."""
+    store = ColorBookProjectStore()
+    return {"projects": store.list_projects()}
+
+@router.get("/projects/{project_id}")
+async def get_project(project_id: str):
+    """Zwraca szczegóły projektu i listę plików."""
+    store = ColorBookProjectStore()
+    data = store.get_project_data(project_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Project not found")
+    files = store.list_project_files(project_id)
+    return {"data": data, "files": files}
+
+@router.post("/regenerate-page")
+async def regenerate_page(project_id: str, page_number: int, preferences: AIPreferences = AIPreferences()):
+    """Uruchamia ponowne generowanie pojedynczej strony."""
+    store = ColorBookProjectStore()
+    project_data = store.get_project_data(project_id)
+    if not project_data:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    # Znajdź dane strony w JSONie
+    pages = project_data.get("coloringBook", {}).get("mainProjectDetails", {}).get("pageIdeas", [])
+    page_data = next((p for p in pages if p["pageNumber"] == page_number), None)
+    
+    if not page_data:
+        raise HTTPException(status_code=404, detail=f"Page {page_number} not found in project")
+        
+    task = celery_app.send_task(
+        "color_book.generate_page",
+        args=[page_data, project_data, preferences.model_dump()]
+    )
+    return {"task_id": task.id}
