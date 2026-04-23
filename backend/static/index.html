@@ -43,6 +43,10 @@
                   <div class="fw-semibold">🎬 J2V Studio</div>
                   <div class="small">Control panel for launching scenarios and rendering.</div>
                 </a>
+                <a id="colorbook-studio-link" href="#" target="_blank" class="btn btn-outline-light w-100">
+                  <div class="fw-semibold">📚 ColorBook Studio</div>
+                  <div class="small">Generate and manage AI coloring books and KDP assets.</div>
+                </a>
                 <a id="flower-link" href="#" target="_blank" class="btn btn-outline-light w-100">
                   <div class="fw-semibold">📊 Flower (Tasks)</div>
                   <div class="small">Real-time monitoring of Celery tasks and workers.</div>
@@ -58,6 +62,7 @@
           <script>
             const host = window.location.hostname;
             document.getElementById('j2v-studio-link').href = `http://${host}:8501`;
+            document.getElementById('colorbook-studio-link').href = `http://${host}:8502`;
             document.getElementById('flower-link').href = `http://${host}:5555`;
             document.getElementById('redis-link').href = `http://${host}:8081`;
           </script>

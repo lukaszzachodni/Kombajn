@@ -69,6 +69,25 @@ services:
     depends_on:
       - api
 
+  colorbook_ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: kombajn_colorbook_ui
+    command: streamlit run backend/colorbook_app.py --server.port 8502 --server.address 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - "8502:8502"
+    environment:
+      - KOMBAJN_API_BASE=http://api:8000
+      - PYTHONPATH=.
+    env_file:
+      - .env
+    depends_on:
+      - api
+
   worker_io:
     <<: *worker-base
     container_name: kombajn_worker_io
