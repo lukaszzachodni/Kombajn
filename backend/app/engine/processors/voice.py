@@ -1,5 +1,5 @@
 from moviepy.editor import AudioFileClip
-from ..elements.voice import VoiceElement
+from backend.app.schemas.video.voice_element import VoiceElement
 from ..j2v_base_processor import J2VBaseProcessor
 import uuid
 from pathlib import Path

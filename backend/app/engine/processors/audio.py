@@ -1,5 +1,5 @@
 from moviepy.editor import AudioFileClip, afx
-from ..elements.audio import AudioElement
+from backend.app.schemas.video.audio_element import AudioElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VAudioProcessor:

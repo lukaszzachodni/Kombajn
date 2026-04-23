@@ -1,5 +1,5 @@
 from moviepy.editor import TextClip
-from ..elements.component import ComponentElement
+from backend.app.schemas.video.component_element import ComponentElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VComponentProcessor:

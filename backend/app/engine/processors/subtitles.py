@@ -1,5 +1,5 @@
 from moviepy.editor import TextClip
-from ..elements.subtitles import SubtitlesElement
+from backend.app.schemas.video.subtitles_element import SubtitlesElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VSubtitlesProcessor:

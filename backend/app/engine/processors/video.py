@@ -1,5 +1,5 @@
 from moviepy.editor import VideoFileClip, vfx
-from ..elements.video import VideoElement
+from backend.app.schemas.video.video_element import VideoElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VVideoProcessor:

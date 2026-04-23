@@ -1,5 +1,5 @@
 from moviepy.editor import TextClip
-from ..elements.text import TextElement
+from backend.app.schemas.video.text_element import TextElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VTextProcessor:

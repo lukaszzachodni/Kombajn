@@ -1,5 +1,5 @@
 from moviepy.editor import ColorClip
-from ..elements.audiogram import AudiogramElement
+from backend.app.schemas.video.audiogram_element import AudiogramElement
 from ..j2v_base_processor import J2VBaseProcessor
 
 class J2VAudiogramProcessor:

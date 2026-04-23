@@ -19,6 +19,10 @@ class J2VMovieRenderer:
     }
 
     def __init__(self, manifest_dict: Dict[str, Any], temp_dir: Optional[Path] = None):
+        # Wymuś użycie systemowego ffmpeg przez MoviePy
+        import moviepy.config as conf
+        conf.change_settings({"FFMPEG_BINARY": "ffmpeg"})
+        
         self.raw_manifest = manifest_dict
         self.movie_vars = manifest_dict.get("variables", {})
         self.movie = J2VMovie(**manifest_dict)
