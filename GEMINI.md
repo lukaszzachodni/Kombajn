@@ -27,6 +27,14 @@
 - **Cleanup**: Every processor is responsible for closing clips and freeing memory.
 - **GPU Usage**: Prefer `h264_nvenc`/`hevc_nvenc` for encoding. Default to `libx264` if GPU test fails.
 
+## 📋 Refactoring & Infrastructure Checklist
+Zanim ogłosisz sukces po zmianach w strukturze plików, SPRAWDŹ:
+1. **Celery Registration**: Czy nowe moduły zadań są w `celery_app.py` (lista `include`)? Worker nie znajdzie ich "z automatu" jeśli nie są w `tasks.py`.
+2. **Import Integrity**: Przeszukaj (`grep`) cały projekt pod kątem starych ścieżek importu.
+3. **API Routing**: Czy `main.py` inkluduje zaktualizowane routery z poprawnymi prefixami?
+4. **Env Parity**: Czy nowe moduły nie wymagają nowych zmiennych w `.env` lub `config.py`?
+5. **Runtime Smoke**: Wyślij testowe żądanie przez API i sprawdź logi workera (`docker compose logs -f worker_editor`), a nie tylko status `pytest`.
+
 ## 🚀 Strategic Roadmap (ROI Focus)
 - **Phase 1 (Current)**: Stable template-based production (MoviePy/CPU).
 - **Phase 2 (Fast-Path)**: `J2VGPUAccelerator` – move scaling/composition to FFmpeg/CUDA filters.
